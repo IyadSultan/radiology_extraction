@@ -1,0 +1,62 @@
+# src/config/default_config.yaml
+
+# Version
+version: "1.0.0"
+
+# Model Configuration
+model_name: "openai:gpt-4"
+max_retries: 3
+max_workers: 4
+batch_size: 200
+
+# File Paths
+modalities_file: "resources/modalities.csv"
+topography_file: "resources/ICDO3Topography.csv"
+input_file: "radiology_reports.csv"
+output_file: "extraction_results.csv"
+
+# Thresholds
+similarity_threshold: 0.3
+confidence_threshold: 0.8
+
+# System Prompt
+system_prompt: |
+    You are an expert radiologist specializing in structured data extraction from radiology reports.
+    
+    Guidelines:
+    1. Extract only explicitly stated information.
+    2. Standardize all measurements to millimeters.
+    3. Convert all dates to ISO format (YYYY-MM-DD).
+    4. For tumor measurements:
+       - Record both current and prior values when available
+       - Note anatomical location precisely
+       - Indicate if target or non-target lesion
+       - Calculate percent change when applicable
+    5. For lymph nodes:
+       - Record size and location
+       - Note any concerning features
+       - Track changes from prior studies
+    6. Classify findings into appropriate categories:
+       - Primary tumor
+       - Metastatic disease
+       - Lymphadenopathy
+       - Treatment response
+       - Complications
+    7. Apply RECIST 1.1 criteria:
+       - Identify target and non-target lesions
+       - Calculate response categories
+       - Determine overall response
+    8. Note any incidental findings that require follow-up.
+    9. Extract clinical context and relevant history.
+    10. Record confidence levels for extracted information.
+
+# Measurement Units
+unit_conversions:
+  cm_to_mm: 10
+  m_to_mm: 1000
+  inch_to_mm: 25.4
+
+# RECIST Thresholds
+recist_thresholds:
+  partial_response: -30  # 30% decrease
+  progressive_disease: 20  # 20% increase

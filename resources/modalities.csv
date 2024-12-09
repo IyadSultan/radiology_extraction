@@ -1,0 +1,37 @@
+Modality,Category,Subcategory,Description
+CT,Cross-sectional,Standard,Computed Tomography without contrast
+CT+C,Cross-sectional,Contrast-Enhanced,Computed Tomography with contrast
+CTA,Cross-sectional,Angiography,CT Angiography
+CTPA,Cross-sectional,Angiography,CT Pulmonary Angiography
+MRI,Cross-sectional,Standard,Magnetic Resonance Imaging without contrast
+MRI+C,Cross-sectional,Contrast-Enhanced,Magnetic Resonance Imaging with contrast
+MRA,Cross-sectional,Angiography,MR Angiography
+DWI,Cross-sectional,Functional,Diffusion-Weighted Imaging
+DCE-MRI,Cross-sectional,Functional,Dynamic Contrast-Enhanced MRI
+fMRI,Cross-sectional,Functional,Functional MRI
+PET,Nuclear Medicine,Standard,Positron Emission Tomography
+PET/CT,Nuclear Medicine,Hybrid,Combined PET and CT
+PET/MRI,Nuclear Medicine,Hybrid,Combined PET and MRI
+SPECT,Nuclear Medicine,Standard,Single-Photon Emission Computed Tomography
+SPECT/CT,Nuclear Medicine,Hybrid,Combined SPECT and CT
+XR,Radiograph,Standard,Plain Film X-ray
+DXA,Radiograph,Densitometry,Dual-energy X-ray Absorptiometry
+FL,Radiograph,Fluoroscopy,Fluoroscopy
+US,Ultrasound,Standard,Ultrasound Imaging
+CEUS,Ultrasound,Contrast-Enhanced,Contrast-Enhanced Ultrasound
+Doppler,Ultrasound,Flow,Doppler Ultrasound
+3D-US,Ultrasound,Advanced,3D Ultrasound
+CBCT,Cross-sectional,Special,Cone Beam CT
+DBT,Radiograph,Advanced,Digital Breast Tomosynthesis
+Mammo,Radiograph,Breast,Mammography
+DEXA,Radiograph,Densitometry,Bone Densitometry
+DTS,Radiograph,Advanced,Digital Tomosynthesis
+EUS,Ultrasound,Endoscopic,Endoscopic Ultrasound
+IVUS,Ultrasound,Intravascular,Intravascular Ultrasound
+TEE,Ultrasound,Cardiac,Transesophageal Echocardiography
+TTE,Ultrasound,Cardiac,Transthoracic Echocardiography
+FDG-PET,Nuclear Medicine,Metabolic,FDG Positron Emission Tomography
+Ga68-PET,Nuclear Medicine,Metabolic,Gallium-68 PET
+NaF-PET,Nuclear Medicine,Metabolic,Sodium Fluoride PET
+PSMA-PET,Nuclear Medicine,Molecular,Prostate-Specific Membrane Antigen PET
+DOTATOC-PET,Nuclear Medicine,Molecular,DOTA-Tyr3-Octreotate PET

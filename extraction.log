@@ -1,0 +1,69 @@
+2024-12-09 23:23:50,890 - extractor - INFO - Starting report extraction
+2024-12-09 23:23:50,890 - extractor - ERROR - Error processing report
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 209, in process_report
+    result = await self.extraction_agent.run(
+TypeError: Agent.run() got an unexpected keyword argument 'text'
+2024-12-09 23:23:50,890 - __main__ - ERROR - Error processing report: Agent.run() got an unexpected keyword argument 'text'
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\examples\example.py", line 75, in run_example
+    result = await extractor.process_report(example_report)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 209, in process_report
+    result = await self.extraction_agent.run(
+TypeError: Agent.run() got an unexpected keyword argument 'text'
+2024-12-09 23:24:50,731 - extractor - INFO - Starting report extraction
+2024-12-09 23:24:50,731 - extractor - ERROR - Error processing report
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 201, in process_report
+    preprocessed = self.extractor.preprocess(text)
+AttributeError: 'RadiologyExtractor' object has no attribute 'extractor'
+2024-12-09 23:24:50,747 - __main__ - ERROR - Error processing report: 'RadiologyExtractor' object has no attribute 'extractor'
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\examples\example.py", line 75, in run_example
+    result = await extractor.process_report(example_report)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 201, in process_report
+    preprocessed = self.extractor.preprocess(text)
+AttributeError: 'RadiologyExtractor' object has no attribute 'extractor'
+2024-12-09 23:27:37,873 - extractor - INFO - Starting report extraction
+2024-12-09 23:27:37,873 - extractor - ERROR - Error processing report
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 274, in process_report
+    preprocessed = self.extractor.preprocess(text)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 236, in preprocess
+    report.sections = self._extract_sections(clean_text)
+AttributeError: 'CombinedExtractor' object has no attribute '_extract_sections'
+2024-12-09 23:27:37,888 - __main__ - ERROR - Error processing report: 'CombinedExtractor' object has no attribute '_extract_sections'
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\examples\example.py", line 75, in run_example
+    result = await extractor.process_report(example_report)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 274, in process_report
+    preprocessed = self.extractor.preprocess(text)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 236, in preprocess
+    report.sections = self._extract_sections(clean_text)
+AttributeError: 'CombinedExtractor' object has no attribute '_extract_sections'
+2024-12-09 23:29:26,301 - extractor - INFO - Starting report extraction
+2024-12-09 23:29:26,301 - extractor - ERROR - Error processing report
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 304, in process_report
+    result = await self.extraction_agent.run(
+TypeError: Agent.run() got an unexpected keyword argument 'prompt'
+2024-12-09 23:29:26,316 - __main__ - ERROR - Error processing report: Agent.run() got an unexpected keyword argument 'prompt'
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\examples\example.py", line 75, in run_example
+    result = await extractor.process_report(example_report)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 304, in process_report
+    result = await self.extraction_agent.run(
+TypeError: Agent.run() got an unexpected keyword argument 'prompt'
+2024-12-09 23:30:18,371 - extractor - INFO - Starting report extraction
+2024-12-09 23:30:18,386 - extractor - ERROR - Error processing report
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 304, in process_report
+    result = await self.extraction_agent.run(
+TypeError: Agent.run() got an unexpected keyword argument 'input'
+2024-12-09 23:30:18,386 - __main__ - ERROR - Error processing report: Agent.run() got an unexpected keyword argument 'input'
+Traceback (most recent call last):
+  File "c:\Users\USER\Documents\radiology_extraction\examples\example.py", line 75, in run_example
+    result = await extractor.process_report(example_report)
+  File "c:\Users\USER\Documents\radiology_extraction\src\extractor.py", line 304, in process_report
+    result = await self.extraction_agent.run(
+TypeError: Agent.run() got an unexpected keyword argument 'input'
