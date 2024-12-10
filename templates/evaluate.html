@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathology Report Evaluation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .report-text {
+            white-space: pre-line;  /* Changed from pre-wrap to pre-line */
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 1em;
+            line-height: 1.3;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        .evaluation-form {
+            margin-top: 0.5rem;
+        }
+        .field-group {
+            margin-bottom: 0.25rem;
+            padding: 0.35rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            background-color: white;
+            font-size: 0.9em;
+        }
+        .field-group:hover {
+            background-color: #f8f9fa;
+        }
+        .field-label {
+            white-space: nowrap;
+            margin-right: 0.5rem;
+        }
+        .flash-messages {
+            margin-top: 0.5rem;
+        }
+        .field-label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0;
+        }
+        .meta-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        .submitted-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            font-size: 0.8em;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .evaluator-info {
+            background-color: #e9ecef;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .navigation-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-check {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .card-body {
+            padding: 0.5rem;
+        }
+        .evaluation-section {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="evaluator-info d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Evaluator:</strong> {{ evaluator_name }}
+                {% if is_submitted %}
+                    <span class="submitted-badge">Submitted</span>
+                {% endif %}
+            </div>
+            <div>
+                Report {{ current_index }} of {{ total_reports }} ({{ percentage }}% complete)
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Original Report Section -->
+            <div class="col-6">
+                <div class="card h-100">
+                    <div class="card-header py-1">
+                        <strong>Original Report</strong>
+                        <div class="meta-info">
+                            <small>MRN: {{ mrn }} | Doc#: {{ doc_num }} | Date: {{ entry_date }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="report-text" id="report-content">{{ note }}</div>
+                    </div>
+                    <script>
+                        // Clean up the report text on load
+                        window.onload = function() {
+                            const reportElement = document.getElementById('report-content');
+                            let text = reportElement.innerText;
+                            
+                            // Remove multiple empty lines and spaces
+                            text = text
+                                .replace(/\n\s*\n/g, '\n')  // Replace multiple empty lines with single line
+                                .replace(/^\s+|\s+$/g, '')   // Remove leading/trailing spaces
+                                .replace(/[\t ]+/g, ' ')     // Replace multiple spaces with single space
+                                .replace(/\n[\t ]+/g, '\n')  // Remove spaces at start of lines
+                                .replace(/[\t ]+\n/g, '\n'); // Remove spaces at end of lines
+                            
+                            reportElement.innerText = text;
+                        };
+                    </script>
+                </div>
+            </div>
+
+            <!-- Evaluation Form Section -->
+            <div class="col-6">
+                <form action="{{ url_for('submit_evaluation') }}" method="post" class="h-100">
+                    <input type="hidden" name="mrn" value="{{ mrn }}">
+                    <input type="hidden" name="doc_num" value="{{ doc_num }}">
+                    <input type="hidden" name="entry_date" value="{{ entry_date }}">
+                    <input type="hidden" name="current_index" value="{{ current_index }}">
+                    
+                    <div class="card h-100">
+                        <div class="card-header py-1">
+                            <strong>Extracted Fields</strong>
+                        </div>
+                        <div class="card-body evaluation-section">
+                            {% for field_name, field_value in fields.items() %}
+                                <div class="field-group">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-check-input me-2" type="checkbox" 
+                                               name="field_{{ field_name }}" 
+                                               id="field_{{ field_name }}"
+                                               {% if field_name in field_results %}
+                                                   {% if field_results[field_name] %}checked{% endif %}
+                                               {% else %}
+                                                   checked
+                                               {% endif %}
+                                               data-shortcut="{{ loop.index }}">
+                                        <label class="form-check-label field-label mb-0" for="field_{{ field_name }}">
+                                            <strong>{{ field_name }}</strong>
+                                            <span class="text-muted">[{{ loop.index }}]</span>:
+                                        </label>
+                                        <span class="ms-2">{{ field_value }}</span>
+                                        <input type="hidden" name="value_{{ field_name }}" value="{{ field_value }}">
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <div class="mt-2">
+                                <label for="evaluator_comments" class="form-label">Comments:</label>
+                                <textarea class="form-control form-control-sm" id="evaluator_comments" 
+                                          name="evaluator_comments" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="mt-3 d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('evaluate', index=prev_index) }}" 
+                                   class="btn btn-outline-secondary btn-sm {% if not has_previous %}disabled{% endif %}">
+                                    ← Previous
+                                </a>
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        Submit [Enter]
+                                    </button>
+                                    <a href="{{ url_for('skip_report') }}" class="btn btn-secondary btn-sm ms-2">
+                                        Skip [Esc]
+                                    </a>
+                                </div>
+                                <a href="{{ url_for('evaluate', index=next_index) }}" 
+                                   class="btn btn-outline-secondary btn-sm {% if not has_next %}disabled{% endif %}">
+                                    Next →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '9') {
+                const checkbox = document.querySelector(`[data-shortcut="${e.key}"]`);
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+            } else if (e.key === 'Enter' && !e.ctrlKey && !e.altKey) {
+                document.querySelector('form').submit();
+            } else if (e.key === 'Escape') {
+                window.location.href = '{{ url_for("skip_report") }}';
+            }
+        });
+    </script>
+</body>
+</html>

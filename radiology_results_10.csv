@@ -1,0 +1,705 @@
+MRN,EXAM_DATE,PROCEDURE,REPORT,modality,body_region,comparison_date,target_lesions,non_target_lesions,new_lesions,overall_assessment,ICDO3_site,ICDO3_site_term,ICDO3_site_similarity,tumor_response,error
+13995332247820,2021-07-26 12:51:00.000,+CT CHEST WITH CONTRAST,"
+Diagnosis: Lymphoma.
+
+
+
+Reason: Follow-up.
+
+
+
+Comparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.
+
+
+
+
+
+Findings:
+
+
+
+Neck CT with IV contrast:
+
+
+
+There are unchanged enlarged hypoattenuating left cervical lymph nodes the large
+
+st seen at levels III measuring 1 cm in short axis.
+
+
+
+There are unchanged mildly enlarged right supraclavicular lymph nodes, none exce
+
+eding 1 cm in short axis.
+
+
+
+There is no new cervical lymph node enlargement.
+
+
+
+Chest CT with IV contrast:
+
+
+
+There are unchanged multiple hypoattenuating conglomerate mediastinal lymph node
+
+s are encasing the aortic arch and its major branches with no significant narrow
+
+ing, for example the subcarinal lymph node measures 2 cm in short axis with no s
+
+ignificant change.
+
+
+
+There is no new intrathoracic lymph node enlargement.
+
+
+
+There is no significant axillary lymph node enlargement.
+
+
+
+The mild pericardial thickening/effusion appears less significant.
+
+
+
+There is a new trace amount of right pleural effusion.
+
+
+
+There is no significant left pleural effusion.
+
+
+
+There is no pulmonary nodule/mass.
+
+
+
+There is no pulmonary consolidation.
+
+
+
+Abdomen and pelvis CT scan with contrast:
+
+
+
+Normal liver, spleen, pancreas, adrenals and both kidneys.
+
+
+
+There is no hydronephrosis bilaterally.
+
+
+
+Unremarkable gallbladder.
+
+
+
+There is no intra or extrahepatic biliary tree dilatation.
+
+
+
+There is no significant retroperitoneal or pelvic lymph node enlargement.
+
+
+
+There is no ascites.
+
+
+
+Unremarkable urinary bladder outline.
+
+
+
+There is no vertebral collapse.
+
+
+
+Impression:
+
+
+
+There has been no significant interval change regarding the hypoattenuating resi
+
+dual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan
+
+ dated 2 February 2021.
+
+
+
+Dr. Mohammad Mujalli
+
+
+
+Radiologist
+
+
+
+",CT,Intrathoracic lymph node,2021-02-02,"[{'location': 'left cervical lymph nodes level III', 'current_value': 10.0, 'current_unit': 'mm', 'standardized_value_mm': 10.0, 'prior_value': 10.0, 'prior_unit': 'mm', 'percent_change': 0.0, 'response_category': 'SD'}, {'location': 'right supraclavicular lymph nodes', 'current_value': 10.0, 'current_unit': 'mm', 'standardized_value_mm': 10.0, 'prior_value': 10.0, 'prior_unit': 'mm', 'percent_change': 0.0, 'response_category': 'SD'}, {'location': 'subcarinal lymph node', 'current_value': 20.0, 'current_unit': 'mm', 'standardized_value_mm': 20.0, 'prior_value': 20.0, 'prior_unit': 'mm', 'percent_change': 0.0, 'response_category': 'SD'}]","[{'location': 'mediastinal lymph nodes', 'current_value': 0.0, 'current_unit': 'mm', 'standardized_value_mm': 0.0, 'prior_value': 0.0, 'prior_unit': 'mm', 'response_category': 'SD'}]",[],No significant interval change regarding the hypoattenuating residual lymph nodes above the diaphragm compared to prior study.,C77.1,Intrathoracic lymph node,1.0,,
+12633977630399,2021-07-26 11:33:00.000,NM FDG-18 WHOLE BODY PET/CT SCAN,"
+(18)F-FDG PET/CT whole body scan: 
+
+
+
+Procedure:
+
+
+
+""Images were acquired from vertex to the knees (standard protocol) caudocraniall
+
+y 88 minutes after IV injection of  132 MBq F18-FDG dose. Axial, sagittal, and c
+
+oronal PET reconstruction were interpreted with and without attenuation correcti
+
+on. Corresponding CT images without IV contrast were also acquired in a Biograph
+
+ mCT flow 64 slices CT, reconstructed in axial, sagittal and coronal planes, and
+
+ reviewed alongside the PET images. The CT images were used for attenuation corr
+
+ection and anatomical correlation of the PET images. Fasting blood sugar at the 
+
+injection time was 96 mg/dl Patient weight is 44 kg.
+
+
+
+Comparison: with previous PET/CT scan on 20.5.2021.
+
+
+
+Findings:
+
+
+
+Head and neck: 
+
+
+
+- There is metabolic regression of the previous hypermetabolic right supraclavic
+
+ular lymph node with current SUVmax=2.17 compared to 10 previously.
+
+
+
+- The included part of the brain demonstrates physiologic FDG metabolic activity
+
+ with no evidence of active focal lesion.
+
+
+
+- Symmetrical physiologic FDG metabolic activity in the adenoids and the vocalis
+
+.
+
+
+
+Chest:  
+
+
+
+- Stable non-specific left lower pulmonary small nodule, still not showing FDG u
+
+ptake.
+
+
+
+- Physiologic myocardial FDG metabolic activity.
+
+
+
+- No evidence of hypermetabolic mediastinal or hilar lymph nodes.
+
+
+
+- No evidence of hypermetabolic pulmonary nodules.
+
+
+
+Abdomen & pelvis:
+
+
+
+- Status post: Left DJ removal+ Right DJ replacement.
+
+
+
+- Significant interval regression in metabolic activity with stable morphology o
+
+f the previously described hypermetabolic right retrocrural small lymph node ( c
+
+urrent SUVmax=2.15 compared to SUVmax=8 previously).
+
+
+
+- There is significant metabolic and size regression of the previous hypermetabo
+
+lic uterine cervix mass currently measuring 1.4 cm in its active component with 
+
+SUVmax =7.93 compared to previous values 4 cm, SUVmax= 22.6 previously.
+
+
+
+- Physiologic limit of FDG metabolic activity in the liver (SUV max: 2.14) as we
+
+ll as the spleen and bowel with no evidence of active focal lesion.
+
+
+
+- Atherosclerotic changes within abdominal aorta and its branches has been noted
+
+. 
+
+
+
+- Bilateral nephrostomies have been noted. 
+
+
+
+Musculoskeletal: 
+
+
+
+- Newly seen hypermetabolic bone lesion within the left 6(th) rib with SUV max 2
+
+.6, corresponding to callus formation seen by CT part of this study, likley trau
+
+matic in nature.
+
+
+
+- Almost stable collapse fractures and sclerotic changes in T8, T11 and L5 verte
+
+brae not showing significant metabolic activity, which are probably osteoporotic
+
+ insufficiency fractures.
+
+
+
+- Physiologic limit of FDG metabolic activity in the remainder of the musculoske
+
+letal system with no evidence of active focal lesions.
+
+
+
+Impression:
+
+
+
+- Findings are compatible with partial response.
+
+
+
+- Partial metabolic and size regression in previously mentioned hypermetabolic m
+
+alignant uterine cervix mass.
+
+
+
+- Significant interval metabolic and size regression in previously mentioned hyp
+
+ermetabolic metastatic right supraclavicular and right retrocrural lymph nodes, 
+
+currently showing mild FDG activity.
+
+
+
+- No interval development of any new hypermetabolic concerning lesions in this s
+
+tudy.
+
+
+
+",FDG-PET/CT,whole body,2021-05-20,"[{'location': 'uterine cervix', 'current_value': 14.0, 'current_unit': 'mm', 'standardized_value_mm': 14.0, 'prior_value': 40.0, 'prior_unit': 'mm', 'percent_change': -65.0, 'response_category': 'PR'}]",[],[],"Findings are compatible with partial response. Partial metabolic and size regression in previously mentioned hypermetabolic malignant uterine cervix mass. Significant interval metabolic and size regression in previously mentioned hypermetabolic metastatic right supraclavicular and right retrocrural lymph nodes, currently showing mild FDG activity. No interval development of any new hypermetabolic concerning lesions in this study.",C16.2,Body stomach,0.5174812777221179,Partial Response,
+13164894301526,2021-07-27 21:14:00.000,X RAY PORTABLE EACH FILM,"
+
+
+
+
+Report will be available upon request
+
+
+
+Impression:
+
+
+
+Report will be available upon request
+
+
+
+",,,,[],[],[],,,,,,
+14601142299512,2022-01-16 09:22:00.000,X RAY PORTABLE EACH FILM,"
+
+
+
+
+Report will be available upon request
+
+
+
+Impression:
+
+
+
+Report will be available upon request
+
+
+
+",,,,[],[],[],,,,,,
+17207276046856,2023-09-12 14:49:00.000,CD COPY,"
+
+
+
+
+Report will be available upon request
+
+
+
+Impression:
+
+
+
+Report will be available upon request
+
+
+
+",,,,[],[],[],,,,,,
+17960555857362,2024-05-23 21:17:00.000,X RAY CHEST ONE VIEW,"
+ Report will be available upon request  Impression:  Report will be available up
+
+on request
+
+
+
+",,,,[],[],[],,,,,,
+14400156979804,2021-07-26 12:19:00.000,NM FDG-18 WHOLE BODY PET/CT SCAN,"
+(18)F- FDG PET/CT whole body scan: 
+
+
+
+Procedure: 
+
+
+
+""Images were acquired from vertex to the mid of thighs (standard protocol) caudo
+
+cranially 91 minutes after IV injection of 204 MBq F18-FDG dose. Axial, sagittal
+
+, and coronal PET reconstruction were interpreted with and without attenuation c
+
+orrection. Corresponding CT images without IV contrast were also acquired in a B
+
+iograph mCT flow 64 slices CT, reconstructed in axial, sagittal and coronal plan
+
+es, and reviewed alongside the PET images. The CT images were used for attenuati
+
+on correction and anatomical correlation of the PET images. Fasting blood sugar 
+
+at the injection time was 80 mg/dl Patient weight is 75 kg.  
+
+
+
+Comparison:  with previous PET/CT scan performed on 22.2.2021.
+
+
+
+Findings:
+
+
+
+Head and neck: 
+
+
+
+- Complete metabolic resolution of the previousely seen hypermetabolic left cerv
+
+ical lymph node (level III). 
+
+
+
+- The included part of the brain demonstrates physiologic FDG metabolic activity
+
+, with no evidence of active focal lesion.
+
+
+
+- Symmetrical physiologic FDG metabolic activity in the adenoids and the vocalis
+
+.
+
+
+
+Chest:  
+
+
+
+- Significant metabolic and size regression of the previously mentioned heteroge
+
+neous peripheral hypermetabolic large bulky lobulated anterior mediastinal mass 
+
+with necrotic center, extending to superior mediastinum, currently this mass mea
+
+suring about 7x3.7cm in its active component and showing heterogenous mild non-s
+
+pecific FDG uptake SUV max=2.2 compared to previous values14x12 cm with SUV max 
+
+21.87.
+
+
+
+- Complete resolution of the previousely seen ground glass opacification of the 
+
+medial aspect of left upper lung lobe and moderate right pleural effusion. 
+
+
+
+- No evidence of hypermetabolic pulmonary nodules.
+
+
+
+Abdomen & pelvis:
+
+
+
+- Physiologic limit of FDG metabolic activity in the liver ( SUV max: 2.3) as we
+
+ll as the spleen and bowel with no evidence of active focal lesion.
+
+
+
+- Physiologic excreted FDG activity in both pelvicalyceal system and U.B.
+
+
+
+- Stable right sided hemorrhagic renal cortical cyst, showing no FDG uptake, mea
+
+suring 1.6 cm. 
+
+
+
+- No evidence of hypermetabolic abdominal or pelvic LNs.
+
+
+
+Musculoskeletal: 
+
+
+
+- Physiologic limit of FDG metabolic activity in the musculoskeletal system with
+
+ no evidence of active focal lesions.
+
+
+
+Impression:
+
+
+
+- Excellent response to therapy (Deauville 5Ps=3).
+
+
+
+- Almost complete metabolic resolution and size regression in previously describ
+
+ed  large mediastinal mass, while current residual anterior mediastinal mass is 
+
+showing peripheral heterogenous mild non-specific FDG activity (less than the li
+
+ver), however; close follow-up is advised to confirm complete response.
+
+
+
+- Complete metabolic resolution of the previousely seen hypermetabolic lymphomat
+
+ous bilateral cervical lymph nodes.
+
+
+
+- No interval development of any new hypermetabolicconcerning lymphomatous lesio
+
+ns in this study.
+
+
+
+
+
+
+
+",FDG-PET,Whole body from vertex to mid-thighs,2021-02-22,"[{'location': 'Anterior mediastinal mass', 'current_value': 70.0, 'current_unit': 'mm', 'standardized_value_mm': 70.0, 'prior_value': 140.0, 'prior_unit': 'mm', 'percent_change': -50.0, 'response_category': 'PR'}]","[{'location': 'Right renal hemorrhagic cyst', 'current_value': 16.0, 'current_unit': 'mm', 'standardized_value_mm': 16.0}]",[],Almost complete metabolic resolution and size regression of the mediastinal mass. No new hypermetabolic lesions detected.,C16.2,Body stomach,0.32988140022604784,Excellent response to therapy,
+13983589119942,2021-07-26 10:51:00.000,+CT CHEST WITH CONTRAST,"
+Diagnosis: Metastatic breast cancer.
+
+
+
+Reason: Follow-up.
+
+
+
+Comparison: Previous CT scan dated 31 March 2021.
+
+
+
+Findings:
+
+
+
+Chest CT with IV contrast:
+
+
+
+There is unchanged left breast mass measuring 2 cm in diameter.
+
+
+
+There is unchanged nodular thickening and enhancement involving both pleural mor
+
+e on the right side, suggestive of stable pulmonary carcinomatosis associated wi
+
+th few right pericardiac enlarged lymph nodes the largest measures 1.3 cm in dia
+
+meter with no significant interval change.
+
+
+
+There are atelectatic changes in the right lower lobe with no significant interv
+
+al change.
+
+
+
+There is interval resolution of the filling defect at the left main pulmonary ar
+
+tery.
+
+
+
+There is no significant pleural effusion.
+
+
+
+There is unchanged minimal amount of pericardial fluid.
+
+
+
+There is no new intrathoracic or axillary lymph node enlargement.
+
+
+
+There is no definite pulmonary parenchymal nodule/mass within the visualised aer
+
+ated lung.
+
+
+
+Abdomen and pelvis CT scan with contrast:
+
+
+
+There are multiple anterior abdominal subcutaneous lesions mostly represent inje
+
+ction sites.
+
+
+
+Normal liver, spleen, pancreas, adrenals and both kidneys apart from unchanged n
+
+onobstructive right renal stones.
+
+
+
+There is no hydronephrosis bilaterally.
+
+
+
+Unremarkable gallbladder.
+
+
+
+There is no intra or extrahepatic biliary tree dilatation.
+
+
+
+There is no significant retroperitoneal or pelvic lymph node enlargement.
+
+
+
+There is no ascites.
+
+
+
+Unremarkable urinary bladder outline, there is foleys catheter seen in situ.
+
+
+
+There is no vertebral collapse.
+
+
+
+Impression:
+
+
+
+The overall appearances are suggestive of stable left breast cancer with stable 
+
+bilateral pleural carcinomatosis, and no new distant metastasis.
+
+
+
+There is interval resolution of the filling defect in the left main pulmonary ar
+
+tery.
+
+
+
+Dr. Mohammad Mujalli
+
+
+
+Radiologist
+
+
+
+",,,,,,,,,,,,Exceeded maximum retries (3) for result validation
+14837731490332,2021-07-27 09:47:00.000,CT CHEST WITH CONTRAST,"
+Chest CT scan:
+
+
+
+No suspicious lung nodule.
+
+
+
+No consolidation.  There are a few small basal atelectatic changes.
+
+
+
+No pleural effusion.
+
+
+
+No enlarged lymph node in the thorax.
+
+
+
+No destructive bone lesion.
+
+
+
+Impression:
+
+
+
+No metastasis in the thorax.
+
+
+
+",CT,chest,,[],"[{'location': 'thorax', 'current_value': 0.0, 'current_unit': 'mm', 'standardized_value_mm': 0.0}]",[],No suspicious findings or new lesions; stable status compared to any prior records if available.,,,,No metastasis in the thorax,
+17077050154964,2024-06-13 00:13:00.000,X RAY CHEST ONE VIEW,"
+ Report will be available upon request  Impression:  Report will be available up
+
+on request
+
+
+
+",,,,[],[],[],Report not available,,,,,
