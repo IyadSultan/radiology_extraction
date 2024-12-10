@@ -50,7 +50,7 @@ def load_data(current_index=0):
 
         # Load radiology results
         print("Loading radiology_results_10.csv...")
-        results_df = pd.read_csv('radiology_results_10.csv')
+        results_df = pd.read_csv('radiology_results_200.csv')
         print(f"Loaded {len(results_df)} rows from CSV")
         
         # Drop rows where Report is missing or just contains placeholder text

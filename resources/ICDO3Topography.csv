@@ -1,324 +1,324 @@
-ICDO3,term
-C00.0,External lip upper
-C00.1,External lip lower
-C00.2,External lip NOS
-C00.3,"Upper lip, mucosa"
-C00.4,"Lower lip, mucosa"
-C00.5,"Mucosa lip, NOS"
-C00.6,Commissure lip
-C00.8,Overlapping lesion of lip
-C01.9,"Base of tongue, NOS"
-C02.0,"Dorsal surface tongue, NOS"
-C02.1,Border of tongue
-C02.2,Ventral surface of tongue NOS
-C02.3,Anterior 2/3 of tongue NOS
-C02.4,Lingual tonsil
-C02.8,Overlapping lesion of tongue
-C02.9,Tongue NOS
-C03.0,Upper gum
-C03.1,Lower gum
-C03.9,Gum NOS
-C04.0,Anterior floor of mouth
-C04.1,Lateral floor of mouth
-C04.8,Overlapping lesion of floor of mouth
-C04.9,Floor of mouth NOS
-C05.0,Hard palate
-C05.1,Soft palate NOS (excludes Nasopharyngcal surface C11.3)
-C05.2,Uvula
-C05.8,Overlapping lesion of palate
-C05.9,Palate NOS
-C06.0,Cheek mucosa
-C06.1,Vestibule of mouth
-C06.2,Retromolar area
-C06.8,Overlapping lesion of other and unspecified parts of mouth
-C06.9,Mouth NOS
-C07.9,Parotid gland
-C08.0,Submaxillary gland
-C08.1,Sublingual gland
-C08.8,Overlapping lesion of major salivary glands
-C08.9,"Major salivary gland, NOS"
-C09.0,Tonsillar fossa
-C09.1,Tonsillar pillar
-C09.8,Overlapping lesion of tonsil
-C09.9,Tonsil NOS (excludes Lingual tonsil C02.4 and Pharyngeal tonsil C11.1)
-C10.0,Vallecula
-C10.1,Anterior surface of epiglottis
-C10.2,Lateral wall oropharynx
-C10.3,Posterior wall oropharynx
-C10.4,Branchial cleft (site of neoplosm)
-C10.8,Overlapping lesion of oropharynx
-C10.9,Oropharynx NOS
-C11.0,Superior wall of nasopharynx
-C11.1,Posterior wall nasopharynx
-C11.2,Lateral wall nasopharynx
-C11.3,Anterior wall nasopharynx
-C11.8,Overlapping lesion of nasopharynx
-C11.9,Nasopharynx NOS
-C12.9,Pyriform sinus
-C13.0,Postcricoid region
-C13.1,Hypopharyngeal aspect of aryepiglottic fold
-C13.2,Posterior wall hypopharynx
-C13.8,Overlapping lesion of hypopharynx
-C13.9,"Hypopharynx, NOS"
-C14.0,Pharynx NOS
-C14.2,Waldeyer's ring
-C14.8,"Overlapping lesion of lip, oral cavity and pharynx"
-C15.0,Cervical esophagus
-C15.1,Thoracic esophagus
-C15.2,Abdominal esophagus
-C15.3,Upper third of esophagus
-C15.4,Middle third of esophagus
-C15.5,Esophagus lower third
-C15.8,Overlapping lesion of esophagus
-C15.9,Esophagus NOS
-C16.0,"Cardia, NOS"
-C16.1,Fundus stomach
-C16.2,Body stomach
-C16.3,Gastric antrum
-C16.4,Pylorus
-C16.5,"Lesser curvature of stomach, NOS (not classifiable to C16.1 to C16.4)"
-C16.6,"Greater curvature of stomach, NOS (not classifiable to C16.0 to C16.4)"
-C16.8,Overlapping lesion of stomach
-C16.9,Stomach NOS
-C17.0,Duodenum
-C17.1,Jejunum
-C17.2,Ileum (excludes ileocecal valve C18.0)
-C17.3,Meckel's diverticulum (site of neoplasm)
-C17.8,Overlapping lesion of small intestine
-C17.9,Small intestine NOS
-C18.0,Cecum
-C18.1,Appendix
-C18.2,Ascending colon
-C18.3,Hepatic flexure of colon
-C18.4,Transverse colon
-C18.5,Splenic flexure of colon
-C18.6,Descending colon
-C18.7,Sigmoid colon
-C18.8,Overlapping lesion of colon
-C18.9,Colon NOS
-C19.9,Rectosigmoid junction
-C20.9,"Rectum, NOS"
-C21.0,"Anus, NOS (excludes Skin of anus and Perianal skin (C44.5)"
-C21.1,Anal canal
-C21.2,Cloacogenic zone
-C21.8,"Overlapping lesion of rectum, anus and anal canal"
-C22.0,Liver
-C22.1,Intrahepatic bile duct
-C23.9,Gallbladder
-C24.0,Extrahepatic bile duct
-C24.1,Ampulla of Vater
-C24.8,Overlapping lesion of biliary tract
-C24.9,"Biliary tract, NOS"
-C25.0,Head of pancreas
-C25.1,Body pancreas
-C25.2,Tail pancreas
-C25.3,Pancreatic duct
-C25.4,Islets of Langerhans
-C25.7,Neck of pancreas
-C25.8,Overlapping lesion of pancreas
-C25.9,Pancreas NOS
-C26.0,"Intestinal tract, NOS"
-C26.8,Overlapping lesion of digestive system
-C26.9,"Gastrointestinal tract, NOS"
-C30.0,"Nasal cavity (excludes Nose, NOS C76.0)"
-C30.1,Middle ear
-C31.0,Maxillary sinus
-C31.1,Ethmoid sinus
-C31.2,Frontal sinus
-C31.3,Sphenoid sinus
-C31.8,Overlapping lesion of accessory sinuses
-C31.9,"Accessory sinus, NOS"
-C32.0,Glottis
-C32.1,Supraglottis
-C32.2,Subglottis
-C32.3,Laryngeal cartilage
-C32.8,Overlapping lesion of larynx
-C32.9,Larynx NOS
-C33.9,Trachea
-C34.0,Main bronchus
-C34.1,"Upper lobe, lung"
-C34.2,"Middle lobe, lung"
-C34.3,"Lower lobe, lung"
-C34.8,Overlapping lesion of lung
-C34.9,Lung NOS
-C37.9,Thymus
-C38.0,Heart
-C38.1,Anterior mediastinum
-C38.2,Posterior mediastinum
-C38.3,Mediastinum NOS
-C38.4,Pleura NOS
-C38.8,"Overlapping lesion of heart, mediastinum and pleura"
-C39.0,"Upper respiratory tract, NOS"
-C39.8,Overlapping lesion of respiratory system and intrathoracic organs
-C39.9,"Respiratory tract, NOS"
-C40.0,"Upper limb long bones, joints"
-C40.1,"Upper limb short bones, joints"
-C40.3,"Lower limb short bones, joints"
-C40.8,"Overlapping lesion of bones, joints and articular cartilage of limbs"
-C40.9,"Bone limb, NOS"
-C41.0,Skull and facial bone
-C41.1,Mandible
-C41.2,Vertebral column (excludes Sacrum and Coccyx C41.4)
-C41.3,"Rib, sternum, clavicle"
-C41.4,Pelvic bone
-C41.8,"Overlapping lesion of bones, joints and articular cartilage"
-C41.9,Bone NOS
-C42.0,Blood
-C42.1,Bone marrow
-C42.2,Spleen
-C42.3,"Reticuloendothelial system, NOS"
-C42.4,"Hematopoietic system, NOS"
-C44.0,"Skin lip, NOS"
-C44.1,Eyelid NOS
-C44.2,External ear
-C44.3,Skin face
-C44.4,"Skin scalp, neck"
-C44.5,Skin trunk
-C44.6,"Skin limb, upper"
-C44.7,"Skin limb, lower"
-C47.0,"Peripheral nerve head, neck"
-C47.1,"Peripheral nerve shoulder, arm"
-C47.2,Peripheral nerve leg
-C47.3,"Peripheral nerve thorax (excludes Thymus, Heart and Mediastinum C37. , C38. )"
-C47.4,Peripheral nerve abdomen
-C47.5,Peripheral nerve pelvis
-C47.6,Peripheral nerve trunk
-C47.8,Overlapping lesion of peripheral nerves and autonomic nervous system
-C47.9,Autonomic nervous system NOS
-C48.0,Retroperitoneum
-C48.1,Peritoneum
-C48.2,Peritoneum NOS
-C48.8,Overlapping lesion of retroperitoneum and peritoneum
-C49.0,Connective tissue head
-C49.1,Connective tissue arm
-C49.2,Connective tissue leg
-C49.3,"Connective tissue thorax (excludes Thymus, Heart and Mediastinum C37. , C38. )"
-C49.4,Connective tissue abdomen
-C49.5,Connective tissue pelvis
-C49.6,"Connective tissue trunk, NOS"
-C49.8,"Overlapping lesion of connective, subcutaneous and other soft tissues"
-C49.9,Connective tissue NOS
-C50.0,Nipple
-C50.1,Central portion of breast
-C50.2,Upper inner quadrant of breast
-C50.3,Lower inner quadrant of breast
-C50.4,Upper outer quadrant of breast
-C50.5,Lower outer quadrant of breast
-C50.6,Axillary tail of breast
-C50.8,Overlapping lesion of breast
-C50.9,Breast NOS (excludes Skin of breast C44.5)
-C51.0,Labium majus
-C51.1,Labium minus
-C51.2,Clitoris
-C51.8,Overlapping lesion of vulva
-C51.9,"Vulva, NOS"
-C52.9,"Vagina, NOS"
-C53.0,Endocervix
-C53.1,Exocervix
-C53.8,Overlapping lesion of cervix uteri
-C53.9,Cervix uteri
-C54.0,Isthmus uteri
-C54.1,Endometrium
-C54.2,Myometrium
-C54.3,Fundus uteri
-C54.8,Overlapping lesion of corpus uteri
-C54.9,Corpus uteri
-C55.9,Uterus NOS
-C56.9,Ovary
-C57.0,Fallopian tube
-C57.1,Broad ligament
-C57.2,Round ligament
-C57.3,Parametrium
-C57.4,Uterine adnexa
-C57.7,Wolffian body
-C57.8,Overlapping lesion of female genital organs
-C57.9,"Female genital tract, NOS"
-C60.0,Prepuce
-C60.1,Glans penis
-C60.2,Body penis
-C60.8,Overlapping lesion of penis
-C60.9,Penis NOS
-C61.9,Prostate gland
-C62.0,Undescended testis (site of neoplasm)
-C62.1,Descended testis
-C62.9,Testis NOS
-C63.0,Epididymis
-C63.1,Spermatic cord
-C63.2,"Scrotum, NOS"
-C63.7,Tunica vaginalis
-C63.8,Overlapping lesion of male genital organs
-C63.9,"Male genital organs, NOS"
-C64.9,Kidney NOS
-C65.9,Renal pelvis
-C66.9,Ureter
-C67.0,"Trigone, bladder"
-C67.1,"Dome, bladder"
-C67.2,Lateral wall bladder
-C67.4,Posterior wall bladder
-C67.6,Ureteric orifice
-C67.7,Urachus
-C67.8,Overlapping lesion of bladder
-C67.9,Bladder NOS
-C68.0,Urethra
-C68.1,Paraurethral gland
-C68.8,Overlapping lesion of urinary organs
-C68.9,"Urinary system, NOS"
-C69.0,Conjunctiva
-C69.1,"Cornea, NOS"
-C69.2,Retina
-C69.3,Choroid
-C69.4,Ciliary body
-C69.5,Lacrimal gland
-C69.6,Orbit NOS
-C69.8,Overlapping lesion of eye and adnexa
-C69.9,Eye NOS
-C70.0,Cerebral meninges
-C70.1,Spinal meninges
-C70.9,Meninges NOS
-C71.0,Cerebrum
-C71.1,Frontal lobe
-C71.2,Temporal lobe
-C71.3,Parietal lobe
-C71.4,Occipital lobe
-C71.5,Ventricle NOS
-C71.6,"Cerebellum, NOS"
-C71.7,Brain stem
-C71.8,Overlapping lesion of brain
-C71.9,Brain NOS
-C72.0,Spinal cord
-C72.1,Cauda equina
-C72.2,Olfactory nerve
-C72.3,Optic nerve
-C72.4,Acoustic nerve
-C72.5,"Cranial nerve, NOS"
-C72.8,Overlapping lesion of brain and central nervous system
-C72.9,Nervous system NOS
-C73.9,Thyroid gland
-C74.0,Adrenal gland cortex
-C74.1,Adrenal gland medulla
-C74.9,Adrenal gland NOS
-C75.0,Parathyroid gland
-C75.1,Pituitary gland
-C75.2,Craniopharyngeal duct
-C75.3,Pineal gland
-C75.4,Carotid body
-C75.5,Aortic body
-C75.8,Overlapping lesion of endocrine glands and related structures
-C75.9,"Endocrine gland, NOS"
-C76.0,"Head, face or neck NOS"
-C76.1,Thorax NOS
-C76.2,Abdomen NOS
-C76.3,Pelvis NOS
-C76.4,Upper limb NOS
-C76.5,Lower limb NOS
-C76.7,Other illdefined sites
-C76.8,Overlapping lesion of ill-defined sites
-C77.0,"Lymph node face, head ,neck"
-C77.1,Intrathoracic lymph node
-C77.2,Intra-abdominal lymph nodes
-C77.3,"Lymph node axilla, arm"
-C77.4,"Lymph node inguinal region, leg"
-C77.5,Lymph node pelvic
-C77.8,Lymph nodes of multiple regions
-C77.9,Lymph node NOS
-C80.9,Unknown primary site
+ICDO3,term,synonyms
+C00.0,External lip upper,"upper external lip;upper vermillion border;upper lip skin surface"
+C00.1,External lip lower,"lower external lip;lower vermillion border;lower lip skin surface"
+C00.2,External lip NOS,"external lip (not otherwise specified);outer lip region;lip external area"
+C00.3,"Upper lip, mucosa","upper lip mucosal surface;internal upper lip;upper labial mucosa"
+C00.4,"Lower lip, mucosa","lower lip mucosal surface;internal lower lip;lower labial mucosa"
+C00.5,"Mucosa lip, NOS","lip mucosal surface;lip lining;inner lip surface"
+C00.6,Commissure lip,"lip corner;oral commissure;angle of the mouth"
+C00.8,Overlapping lesion of lip,"combined lip regions;multiple lip areas;lip intersection sites"
+C01.9,"Base of tongue, NOS","tongue base;tongue root;posterior tongue region"
+C02.0,"Dorsal surface tongue, NOS","dorsum of tongue;top surface of tongue;superior tongue surface"
+C02.1,Border of tongue,"tongue margin;tongue edge;peripheral tongue area"
+C02.2,Ventral surface of tongue NOS,"underside of tongue;inferior tongue surface;ventral tongue area"
+C02.3,Anterior 2/3 of tongue NOS,"front two-thirds of tongue;anterior tongue region;oral tongue portion"
+C02.4,Lingual tonsil,"tongue tonsil;lymphoid tissue of tongue base;lingual lymphatic tissue"
+C02.8,Overlapping lesion of tongue,"multiple tongue sites;composite tongue regions;tongue area overlap"
+C02.9,Tongue NOS,"tongue (not otherwise specified);entire tongue;lingual structure"
+C03.0,Upper gum,"maxillary gingiva;upper gingival tissue;upper gum line"
+C03.1,Lower gum,"mandibular gingiva;lower gingival tissue;lower gum line"
+C03.9,Gum NOS,"gingiva NOS;oral gum tissue;gingival region"
+C04.0,Anterior floor of mouth,"front floor of mouth;anterior oral floor;prelingual floor area"
+C04.1,Lateral floor of mouth,"side floor of mouth;lateral oral floor;floor of mouth (side)"
+C04.8,Overlapping lesion of floor of mouth,"combined floor mouth sites;floor of mouth multiple areas;overlapping oral floor regions"
+C04.9,Floor of mouth NOS,"floor of mouth (not otherwise specified);oral cavity inferior surface;sub-lingual space"
+C05.0,Hard palate,"bony palate;anterior palate;hard roof of mouth"
+C05.1,"Soft palate NOS (excludes Nasopharyngcal surface C11.3)","velum;soft roof of mouth;posterior palatal area"
+C05.2,Uvula,"palatine uvula;uvular process;hangdown of the soft palate"
+C05.8,Overlapping lesion of palate,"combined palatal areas;multifocal palate regions;overlapping palate lesions"
+C05.9,Palate NOS,"palate (not otherwise specified);roof of mouth;palatal structure"
+C06.0,Cheek mucosa,"buccal mucosa;inner cheek lining;cheek oral mucosal surface"
+C06.1,Vestibule of mouth,"oral vestibule;mouth vestibular space;area between lips and teeth"
+C06.2,Retromolar area,"area behind molars;retromolar trigone;posterior mandibular alveolar region"
+C06.8,Overlapping lesion of other and unspecified parts of mouth,"multiple oral sites;combined oral areas;overlapping mouth regions"
+C06.9,Mouth NOS,"oral cavity (not otherwise specified);mouth region;buccal/oral space"
+C07.9,Parotid gland,"salivary gland (parotid);largest salivary gland;parotid region"
+C08.0,Submaxillary gland,"submandibular gland;submaxillary salivary gland;submaxillary node"
+C08.1,Sublingual gland,"salivary gland under tongue;sublingual salivary gland;floor-of-mouth gland"
+C08.8,Overlapping lesion of major salivary glands,"multiple major salivary glands;combined salivary regions;overlapping gland sites"
+C08.9,"Major salivary gland, NOS","unspecified major salivary gland;large salivary gland NOS;principal salivary organ"
+C09.0,Tonsillar fossa,"tonsillar bed;fossa of tonsil;tonsillar recess"
+C09.1,Tonsillar pillar,"palatine pillar;tonsillar arch;fold near tonsil"
+C09.8,Overlapping lesion of tonsil,"multiple tonsillar sites;overlapping tonsil regions;combined tonsil areas"
+C09.9,"Tonsil NOS (excludes Lingual tonsil C02.4 and Pharyngeal tonsil C11.1)","palatine tonsil (not otherwise specified);tonsillar tissue;tonsil region"
+C10.0,Vallecula,"vallecular space;depression at tongue base;vallecula epiglottica"
+C10.1,Anterior surface of epiglottis,"front epiglottic surface;anterior epiglottic area;ventral side of epiglottis"
+C10.2,Lateral wall oropharynx,"oropharyngeal lateral wall;side wall of oropharynx;pharyngeal lateral aspect"
+C10.3,Posterior wall oropharynx,"back wall of oropharynx;posterior pharyngeal surface;rear oropharyngeal wall"
+C10.4,Branchial cleft (site of neoplasm),"branchial apparatus remnant;pharyngeal cleft;branchial cleft region"
+C10.8,Overlapping lesion of oropharynx,"multiple oropharyngeal sites;combined oropharynx areas;overlapping throat regions"
+C10.9,Oropharynx NOS,"middle pharynx NOS;oropharyngeal cavity;pharyngeal midsection"
+C11.0,Superior wall of nasopharynx,"top wall nasopharynx;superior pharyngeal roof;upper nasopharyngeal area"
+C11.1,Posterior wall nasopharynx,"back wall of nasopharynx;posterior nasopharyngeal region;nasopharyngeal rear aspect"
+C11.2,Lateral wall nasopharynx,"side wall of nasopharynx;lateral nasopharyngeal area;nasopharynx lateral aspect"
+C11.3,Anterior wall nasopharynx,"front wall nasopharynx;anterior nasopharyngeal region;nasopharynx frontal aspect"
+C11.8,Overlapping lesion of nasopharynx,"multiple nasopharyngeal sites;combined nasopharynx areas;overlapping nasopharynx lesions"
+C11.9,Nasopharynx NOS,"nasopharyngeal region NOS;upper pharynx region;post-nasal space"
+C12.9,Pyriform sinus,"piriform fossa;laryngopharyngeal recess;hypopharyngeal sinus"
+C13.0,Postcricoid region,"area behind cricoid cartilage;post-cricoid space;pharyngoesophageal region"
+C13.1,Hypopharyngeal aspect of aryepiglottic fold,"aryepiglottic fold in hypopharynx;aryepiglottic margin;fold near epiglottis"
+C13.2,Posterior wall hypopharynx,"back wall of hypopharynx;posterior hypopharyngeal surface;rear hypopharynx"
+C13.8,Overlapping lesion of hypopharynx,"multiple hypopharyngeal sites;combined hypopharynx areas;overlapping hypopharyngeal regions"
+C13.9,"Hypopharynx, NOS","inferior pharynx NOS;lower pharyngeal region;hypopharyngeal area unspecified"
+C14.0,Pharynx NOS,"throat NOS;pharyngeal cavity;pharynx region"
+C14.2,Waldeyer's ring,"pharyngeal lymphoid ring;tonsillar ring;lymphatic tissue ring in throat"
+C14.8,"Overlapping lesion of lip, oral cavity and pharynx","combined lip-oral-pharyngeal regions;multi-site head & neck overlap;overlapping oral and pharyngeal areas"
+C15.0,Cervical esophagus,"neck esophagus;upper esophagus;cervical segment of esophagus"
+C15.1,Thoracic esophagus,"chest esophagus;middle esophageal portion;thoracic segment of esophagus"
+C15.2,Abdominal esophagus,"lower esophageal segment;distal esophagus;abdominal portion of esophagus"
+C15.3,Upper third of esophagus,"proximal esophagus;upper esophageal portion;superior third of esophagus"
+C15.4,Middle third of esophagus,"mid esophagus;central esophageal region;middle segment of esophagus"
+C15.5,Esophagus lower third,"distal esophageal portion;inferior third of esophagus;lower esophagus"
+C15.8,Overlapping lesion of esophagus,"multiple esophageal segments;combined esophageal sites;overlapping esophageal regions"
+C15.9,Esophagus NOS,"esophageal canal NOS;food pipe;esophagus (unspecified)"
+C16.0,"Cardia, NOS","gastric cardia;cardial region of stomach;esophagogastric junction"
+C16.1,Fundus stomach,"fundic region;top portion of stomach;gastric fundus"
+C16.2,Body stomach,"corpus stomach;gastric body;mid-stomach area"
+C16.3,Gastric antrum,"antrum of stomach;lower stomach chamber;pyloric antrum"
+C16.4,Pylorus,"pyloric channel;stomach outlet;pyloric region"
+C16.5,"Lesser curvature of stomach, NOS (not classifiable to C16.1 to C16.4)","lesser gastric curvature;inner stomach curve;lesser curve margin"
+C16.6,"Greater curvature of stomach, NOS (not classifiable to C16.0 to C16.4)","greater gastric curvature;outer stomach curve;greater curve margin"
+C16.8,Overlapping lesion of stomach,"multiple gastric regions;combined stomach areas;overlapping gastric sites"
+C16.9,Stomach NOS,"gastric region NOS;stomach (unspecified);gastric cavity"
+C17.0,Duodenum,"first part of small intestine;duodenal bulb;proximal small bowel"
+C17.1,Jejunum,"middle small intestine;jejunum segment;mid small bowel"
+C17.2,Ileum (excludes ileocecal valve C18.0),"distal small intestine;ileal segment;terminal small bowel"
+C17.3,Meckel's diverticulum (site of neoplasm),"Meckel diverticulum;ileal outpouching;congenital ileal diverticulum"
+C17.8,Overlapping lesion of small intestine,"multiple small bowel sites;combined small intestinal regions;overlapping small intestine segments"
+C17.9,Small intestine NOS,"small bowel NOS;small gut;small intestine (unspecified)"
+C18.0,Cecum,"cecal region;beginning of large intestine;right colon start"
+C18.1,Appendix,"vermiform appendix;appendiceal region;appendix vermiformis"
+C18.2,Ascending colon,"right colon;ascending segment of large intestine;proximal colon"
+C18.3,Hepatic flexure of colon,"right colic flexure;hepatic bend;colon bend near liver"
+C18.4,Transverse colon,"middle colon;transverse segment;colon across abdomen"
+C18.5,Splenic flexure of colon,"left colic flexure;splenic bend;colon bend near spleen"
+C18.6,Descending colon,"left colon;descending segment of large intestine;downward colon"
+C18.7,Sigmoid colon,"sigmoid segment;sigmoidal colon;S-shaped colon"
+C18.8,Overlapping lesion of colon,"multiple colon regions;combined colonic areas;overlapping large bowel sites"
+C18.9,Colon NOS,"large intestine NOS;colonic region;colon (unspecified)"
+C19.9,Rectosigmoid junction,"rectosigmoid area;transition colon to rectum;colon-rectum junction"
+C20.9,"Rectum, NOS","rectal region NOS;last part of large intestine;rectum (unspecified)"
+C21.0,"Anus, NOS (excludes Skin of anus and Perianal skin (C44.5)","anal canal external opening;anal region NOS;anus (unspecified)"
+C21.1,Anal canal,"anal canal proper;internal anal passage;canal of anus"
+C21.2,Cloacogenic zone,"transitional zone of anus;cloacal region;anorectal transitional epithelium"
+C21.8,"Overlapping lesion of rectum, anus and anal canal","multiple anorectal sites;combined rectal-anal areas;overlapping anorectal regions"
+C22.0,Liver,"hepatic organ;liver parenchyma;hepatic tissue"
+C22.1,Intrahepatic bile duct,"bile ducts within liver;intrahepatic biliary tree;inner liver bile duct"
+C23.9,Gallbladder,"cholecyst;gall bladder;storage organ for bile"
+C24.0,Extrahepatic bile duct,"common bile duct;extrahepatic biliary duct;outside liver bile duct"
+C24.1,Ampulla of Vater,"hepatopancreatic ampulla;ampulla vateri;common bile-pancreatic duct opening"
+C24.8,Overlapping lesion of biliary tract,"multiple biliary sites;combined bile duct areas;overlapping biliary regions"
+C24.9,"Biliary tract, NOS","biliary tree NOS;bile duct system;unspecified biliary region"
+C25.0,Head of pancreas,"pancreatic head;proximal pancreas;right-sided pancreas portion"
+C25.1,Body pancreas,"pancreatic body;middle pancreas;central pancreatic region"
+C25.2,Tail pancreas,"pancreatic tail;distal pancreas;left-sided pancreas portion"
+C25.3,Pancreatic duct,"duct of Wirsung;pancreatic main duct;pancreatic drainage channel"
+C25.4,Islets of Langerhans,"pancreatic islets;endocrine pancreatic cells;islet cells"
+C25.7,Neck of pancreas,"pancreatic neck;pancreatic isthmus;transitional pancreas segment"
+C25.8,Overlapping lesion of pancreas,"multiple pancreatic sites;combined pancreas areas;overlapping pancreatic regions"
+C25.9,Pancreas NOS,"pancreatic gland NOS;pancreatic organ;pancreas (unspecified)"
+C26.0,"Intestinal tract, NOS","intestinal tract (not otherwise specified);gut tube;unspecified intestinal region"
+C26.8,Overlapping lesion of digestive system,"multiple GI sites;combined digestive areas;overlapping gastrointestinal regions"
+C26.9,"Gastrointestinal tract, NOS","GI tract NOS;unspecified GI region;digestive tract (unspecified)"
+C30.0,"Nasal cavity (excludes Nose, NOS C76.0)","inside of nose;nasal passage;nasal chamber"
+C30.1,Middle ear,"tympanic cavity;middle ear chamber;ear cavity between eardrum and cochlea"
+C31.0,Maxillary sinus,"antrum of Highmore;maxillary antrum;sinus in cheek bone"
+C31.1,Ethmoid sinus,"ethmoidal air cells;ethmoid air sinus;ethmoidal labyrinth"
+C31.2,Frontal sinus,"frontal air sinus;forehead sinus;frontal air cavity"
+C31.3,Sphenoid sinus,"sphenoidal sinus;sinus in sphenoid bone;deep skull sinus"
+C31.8,Overlapping lesion of accessory sinuses,"multiple sinus sites;combined paranasal sinuses;overlapping sinus regions"
+C31.9,"Accessory sinus, NOS","paranasal sinus NOS;unspecified sinus;accessory nasal cavity"
+C32.0,Glottis,"vocal cords area;glottic region;voice box opening"
+C32.1,Supraglottis,"above the vocal cords;supraglottic region;laryngeal area above glottis"
+C32.2,Subglottis,"below the vocal cords;subglottic region;laryngeal area below glottis"
+C32.3,Laryngeal cartilage,"cartilage of larynx;laryngeal framework;voice box cartilage"
+C32.8,Overlapping lesion of larynx,"multiple laryngeal sites;combined voice box areas;overlapping larynx regions"
+C32.9,Larynx NOS,"voice box NOS;unspecified laryngeal region;larynx (not otherwise specified)"
+C33.9,Trachea,"windpipe;tracheal airway;tracheal tube"
+C34.0,Main bronchus,"primary bronchus;main airway branch;primary branch of windpipe"
+C34.1,"Upper lobe, lung","upper lung lobe;superior pulmonary lobe;top portion of lung"
+C34.2,"Middle lobe, lung","middle lung lobe;median pulmonary lobe;central portion of right lung"
+C34.3,"Lower lobe, lung","lower lung lobe;inferior pulmonary lobe;bottom portion of lung"
+C34.8,Overlapping lesion of lung,"multiple lung sites;combined pulmonary areas;overlapping lung regions"
+C34.9,Lung NOS,"pulmonary organ NOS;lung (unspecified);respiratory organ"
+C37.9,Thymus,"thymic gland;thymus organ;mediastinal lymphoid organ"
+C38.0,Heart,"cardiac organ;heart muscle;myocardium region"
+C38.1,Anterior mediastinum,"front mediastinal region;anterior chest cavity;anterior mediastinal compartment"
+C38.2,Posterior mediastinum,"back mediastinal region;posterior chest cavity;posterior mediastinal compartment"
+C38.3,Mediastinum NOS,"mediastinal space NOS;central thoracic cavity;mediastinum (unspecified)"
+C38.4,Pleura NOS,"pleural membrane;lining of lung;pleura (unspecified)"
+C38.8,"Overlapping lesion of heart, mediastinum and pleura","multiple thoracic sites;combined heart/mediastinum/pleura areas;overlapping thoracic regions"
+C39.0,"Upper respiratory tract, NOS","upper airway NOS;upper breathing passages;unassigned upper respiratory region"
+C39.8,Overlapping lesion of respiratory system and intrathoracic organs,"multiple thoracic sites;combined chest organs;overlapping respiratory/intrathoracic regions"
+C39.9,"Respiratory tract, NOS","airway NOS;respiratory system (unspecified);breathing passages"
+C40.0,"Upper limb long bones, joints","long bones of arm;humerus or radius area;upper extremity skeletal elements"
+C40.1,"Upper limb short bones, joints","carpal bones;short bones of hand;upper limb small joints"
+C40.3,"Lower limb short bones, joints","tarsal bones;short bones of foot;lower limb small joints"
+C40.8,"Overlapping lesion of bones, joints and articular cartilage of limbs","multiple limb skeletal sites;combined bone/joint areas;overlapping limb regions"
+C40.9,"Bone limb, NOS","limb bone NOS;extremity bone (unspecified);bone of arm/leg (not specified)"
+C41.0,Skull and facial bone,"craniofacial skeleton;skull bones;facial bony structure"
+C41.1,Mandible,"lower jaw bone;mandibular bone;jaw (lower)"
+C41.2,Vertebral column (excludes Sacrum and Coccyx C41.4),"spinal column;vertebrae;backbone (excluding sacrum/coccyx)"
+C41.3,"Rib, sternum, clavicle","thoracic cage bones;ribcage elements;sternum and collarbone"
+C41.4,Pelvic bone,"hip bone;pelvic girdle;innominate bone"
+C41.8,"Overlapping lesion of bones, joints and articular cartilage","multiple skeletal sites;combined bone/joint/cartilage areas;overlapping osseous regions"
+C41.9,Bone NOS,"bone tissue NOS;osseous structure (unspecified);bone (not otherwise specified)"
+C42.0,Blood,"blood fluid;circulating blood;vascular fluid"
+C42.1,Bone marrow,"marrow cavity;hematopoietic tissue;bone marrow cells"
+C42.2,Spleen,"splenic organ;lymphoid organ in abdomen;spleen tissue"
+C42.3,"Reticuloendothelial system, NOS","RES system;mononuclear phagocyte system;unspecified reticuloendothelial tissue"
+C42.4,"Hematopoietic system, NOS","blood-forming system NOS;hematopoietic tissue;unspecified blood cell formation system"
+C44.0,"Skin lip, NOS","lip skin surface;cutaneous lip area;skin of lip (not otherwise specified)"
+C44.1,Eyelid NOS,"skin of eyelid;eyelid integument;eyelid (not otherwise specified)"
+C44.2,External ear,"auricular skin;pinna area;outer ear surface"
+C44.3,Skin face,"facial skin;skin of visage;facial integument"
+C44.4,"Skin scalp, neck","scalp skin;neck skin;head and neck skin"
+C44.5,Skin trunk,"skin of torso;trunk integument;skin covering chest/abdomen/back"
+C44.6,"Skin limb, upper","arm skin;forearm and hand skin;upper extremity integument"
+C44.7,"Skin limb, lower","leg skin;thigh and foot skin;lower extremity integument"
+C47.0,"Peripheral nerve head, neck","cranial peripheral nerves;head/neck peripheral nerve branches;peripheral nerve in head/neck region"
+C47.1,"Peripheral nerve shoulder, arm","brachial plexus region;arm peripheral nerves;shoulder nerve branches"
+C47.2,Peripheral nerve leg,"sciatic nerve region;leg peripheral nerves;lower limb nerve branches"
+C47.3,"Peripheral nerve thorax (excludes Thymus, Heart and Mediastinum C37. , C38. )","chest wall nerves;thoracic peripheral nerves;intercostal nerve region"
+C47.4,Peripheral nerve abdomen,"abdominal peripheral nerves;lumbar plexus region;abdominal wall nerve branches"
+C47.5,Peripheral nerve pelvis,"pelvic peripheral nerves;sacral plexus region;nerve branches in pelvis"
+C47.6,Peripheral nerve trunk,"trunk peripheral nerves;torso nerve pathways;central body nerve branches"
+C47.8,Overlapping lesion of peripheral nerves and autonomic nervous system,"multiple nerve sites;combined peripheral/autonomic nerves;overlapping neural regions"
+C47.9,Autonomic nervous system NOS,"autonomic nerves (unspecified);ANS region;involuntary nervous system"
+C48.0,Retroperitoneum,"area behind peritoneum;retroperitoneal space;posterior abdominal cavity"
+C48.1,Peritoneum,"peritoneal lining;abdominal cavity membrane;serous membrane of abdomen"
+C48.2,Peritoneum NOS,"unspecified peritoneum;peritoneal cavity lining;abdominal serous membrane"
+C48.8,Overlapping lesion of retroperitoneum and peritoneum,"multiple abdominal linings;combined peritoneal regions;overlapping retroperitoneal/peritoneal areas"
+C49.0,Connective tissue head,"head soft tissues;craniofacial connective tissue;connective tissue of head region"
+C49.1,Connective tissue arm,"arm soft tissues;connective tissue upper limb;musculoskeletal support tissues arm"
+C49.2,Connective tissue leg,"leg soft tissues;connective tissue lower limb;musculoskeletal support tissues leg"
+C49.3,"Connective tissue thorax (excludes Thymus, Heart and Mediastinum C37. , C38. )","chest wall connective tissue;thoracic soft tissues;connective tissues of trunk"
+C49.4,Connective tissue abdomen,"abdominal wall tissues;abdominal connective tissue;supportive tissues of abdomen"
+C49.5,Connective tissue pelvis,"pelvic connective tissue;soft tissues of pelvis;pelvic support tissue"
+C49.6,"Connective tissue trunk, NOS","trunk connective tissue (unspecified);torso soft tissues;general trunk fascia"
+C49.8,"Overlapping lesion of connective, subcutaneous and other soft tissues","multiple soft tissue sites;combined connective tissue areas;overlapping soft tissue regions"
+C49.9,Connective tissue NOS,"unspecified connective tissue;general soft tissue;supportive tissue NOS"
+C50.0,Nipple,"mammary papilla;breast nipple;areolar projection"
+C50.1,Central portion of breast,"central breast tissue;subareolar region;middle breast area"
+C50.2,Upper inner quadrant of breast,"upper medial breast;inner upper quadrant;superomedial breast quadrant"
+C50.3,Lower inner quadrant of breast,"lower medial breast;inner lower quadrant;inferomedial breast quadrant"
+C50.4,Upper outer quadrant of breast,"upper lateral breast;outer upper quadrant;superolateral breast quadrant"
+C50.5,Lower outer quadrant of breast,"lower lateral breast;outer lower quadrant;inferolateral breast quadrant"
+C50.6,Axillary tail of breast,"tail of Spence;axillary extension;lateral breast extension"
+C50.8,Overlapping lesion of breast,"multiple breast quadrants;combined mammary regions;overlapping breast areas"
+C50.9,Breast NOS (excludes Skin of breast C44.5),"breast tissue (unspecified);mammary gland region;breast (not otherwise specified)"
+C51.0,Labium majus,"outer vaginal lip;major labium;larger external genital fold"
+C51.1,Labium minus,"inner vaginal lip;minor labium;smaller internal genital fold"
+C51.2,Clitoris,"clitoral organ;female erectile structure;clitoral glans"
+C51.8,Overlapping lesion of vulva,"multiple vulvar areas;combined external genital sites;overlapping vulvar regions"
+C51.9,"Vulva, NOS","female external genitalia (unspecified);vulvar region;vulva (not otherwise specified)"
+C52.9,"Vagina, NOS","vaginal canal (unspecified);birth canal;vaginal region"
+C53.0,Endocervix,"cervical canal;endocervical lining;inner cervix"
+C53.1,Exocervix,"ectocervix;outer cervix surface;vaginal portion of cervix"
+C53.8,Overlapping lesion of cervix uteri,"multiple cervical sites;combined cervical areas;overlapping cervix regions"
+C53.9,Cervix uteri,"cervical region;neck of uterus;cervix (not otherwise specified)"
+C54.0,Isthmus uteri,"uterine isthmus;transitional area cervix-body;isthmus of uterus"
+C54.1,Endometrium,"uterine lining;endometrial tissue;inner uterine mucosa"
+C54.2,Myometrium,"uterine muscle layer;myometrial tissue;muscular layer of uterus"
+C54.3,Fundus uteri,"fundus of uterus;top uterine portion;upper uterine segment"
+C54.8,Overlapping lesion of corpus uteri,"multiple uterine body sites;combined uterine corpus areas;overlapping uterus regions"
+C54.9,Corpus uteri,"uterine body;main uterus portion;corpus of uterus"
+C55.9,Uterus NOS,"uterine organ NOS;unspecified uterus region;womb (not otherwise specified)"
+C56.9,Ovary,"ovarian gland;female gonad;ovary organ"
+C57.0,Fallopian tube,"oviduct;uterine tube;salpinx"
+C57.1,Broad ligament,"broad uterine ligament;supportive uterine ligament;pelvic ligament of uterus"
+C57.2,Round ligament,"round ligament of uterus;uterine round ligament;pelvic supportive ligament"
+C57.3,Parametrium,"connective tissue around uterus;parametrial tissue;uterine parametrium"
+C57.4,Uterine adnexa,"adnexal structures;ovaries and tubes;uterine appendages"
+C57.7,Wolffian body,"mesonephric body;Wolffian duct remnant;embryonic structure near gonads"
+C57.8,Overlapping lesion of female genital organs,"multiple female genital sites;combined gynecologic areas;overlapping female reproductive regions"
+C57.9,"Female genital tract, NOS","unspecified female reproductive tract;female genital system;gynecological tract NOS"
+C60.0,Prepuce,"foreskin;preputial skin;penile prepuce"
+C60.1,Glans penis,"glans;penile head;tip of penis"
+C60.2,Body penis,"shaft of penis;penile body;main penile portion"
+C60.8,Overlapping lesion of penis,"multiple penile sites;combined penis areas;overlapping penile regions"
+C60.9,Penis NOS,"penile organ NOS;male external genital organ;penis (unspecified)"
+C61.9,Prostate gland,"prostatic gland;male prostate;prostatic organ"
+C62.0,Undescended testis (site of neoplasm),"cryptorchid testis;undescended gonad;retained testicle"
+C62.1,Descended testis,"scrotal testis;normal positioned testicle;descended gonad"
+C62.9,Testis NOS,"testicle NOS;male gonad;testis (unspecified)"
+C63.0,Epididymis,"epididymal duct;testicular appendage;epididymal structure"
+C63.1,Spermatic cord,"vas deferens region;spermatic cord structure;cord leading from testis"
+C63.2,"Scrotum, NOS","scrotal sac;scrotal skin;scrotum (unspecified)"
+C63.7,Tunica vaginalis,"serous covering of testis;tunica vaginalis testis;testicular lining"
+C63.8,Overlapping lesion of male genital organs,"multiple male genital sites;combined male reproductive areas;overlapping male genital regions"
+C63.9,"Male genital organs, NOS","unspecified male reproductive organs;male genitalia NOS;male reproductive tract"
+C64.9,Kidney NOS,"renal organ NOS;kidney (unspecified);renal structure"
+C65.9,Renal pelvis,"renal collecting region;pelvis of kidney;renal pelvic area"
+C66.9,Ureter,"ureteral tube;kidney-to-bladder duct;urinary duct"
+C67.0,"Trigone, bladder","bladder trigone;vesical trigone;triangular area of bladder"
+C67.1,"Dome, bladder","bladder dome;top of bladder;superior bladder region"
+C67.2,Lateral wall bladder,"side wall of bladder;bladder lateral aspect;bladder wall (side)"
+C67.4,Posterior wall bladder,"back wall of bladder;posterior bladder aspect;rear bladder wall"
+C67.6,Ureteric orifice,"ureteral orifice;bladder ureter opening;ureter-bladder junction"
+C67.7,Urachus,"median umbilical ligament;urachal remnant;channel between bladder and navel"
+C67.8,Overlapping lesion of bladder,"multiple bladder sites;combined bladder areas;overlapping vesical regions"
+C67.9,Bladder NOS,"urinary bladder NOS;bladder (unspecified);vesical organ"
+C68.0,Urethra,"urinary channel;urethral tube;urethral passage"
+C68.1,Paraurethral gland,"Skene's gland;periurethral gland;gland near urethra"
+C68.8,Overlapping lesion of urinary organs,"multiple urinary sites;combined urinary tract areas;overlapping urinary regions"
+C68.9,"Urinary system, NOS","unassigned urinary region;urinary system (unspecified);kidney-bladder tract NOS"
+C69.0,Conjunctiva,"eye conjunctiva;ocular lining;conjunctival membrane"
+C69.1,"Cornea, NOS","corneal tissue;eye cornea;front eye surface"
+C69.2,Retina,"retinal tissue;inner eye layer;vision receptor layer"
+C69.3,Choroid,"choroidal layer;vascular layer of eye;eye choroid"
+C69.4,Ciliary body,"ciliary apparatus;eye ciliary structure;ciliary muscle and processes"
+C69.5,Lacrimal gland,"tear gland;lacrimal apparatus;tear-producing gland"
+C69.6,Orbit NOS,"eye socket;orbital cavity;orbit (unspecified)"
+C69.8,Overlapping lesion of eye and adnexa,"multiple ocular sites;combined eye/adnexal areas;overlapping eye regions"
+C69.9,Eye NOS,"eye organ NOS;ocular region;eye (unspecified)"
+C70.0,Cerebral meninges,"cranial meninges;brain coverings;dura/arachnoid/pia of brain"
+C70.1,Spinal meninges,"meninges of spinal cord;spinal coverings;dura/arachnoid/pia of spine"
+C70.9,Meninges NOS,"meningeal layers NOS;meninges (unspecified);protective brain/spine membranes"
+C71.0,Cerebrum,"cerebral hemispheres;forebrain;main brain region"
+C71.1,Frontal lobe,"front brain lobe;anterior cerebral lobe;frontal cerebral region"
+C71.2,Temporal lobe,"temporal brain lobe;side cerebral lobe;temporal region of cerebrum"
+C71.3,Parietal lobe,"parietal brain lobe;top lateral cerebral lobe;somatosensory lobe"
+C71.4,Occipital lobe,"occipital brain lobe;posterior cerebral lobe;visual processing area"
+C71.5,Ventricle NOS,"brain ventricle (unspecified);cerebral ventricle;CSF-filled cavity"
+C71.6,"Cerebellum, NOS","cerebellar region;hindbrain coordination center;cerebellum (unspecified)"
+C71.7,Brain stem,"midbrain/pons/medulla;brainstem region;lower brain structure"
+C71.8,Overlapping lesion of brain,"multiple brain areas;combined cerebral regions;overlapping intracranial sites"
+C71.9,Brain NOS,"brain (not otherwise specified);cerebral organ;cranial CNS tissue"
+C72.0,Spinal cord,"medulla spinalis;spinal neural tube;cord within vertebral column"
+C72.1,Cauda equina,"bundle of spinal nerves;cauda equina region;lumbar-sacral nerve roots"
+C72.2,Olfactory nerve,"first cranial nerve;olfactory bulb & tract;smell nerve"
+C72.3,Optic nerve,"second cranial nerve;nerve of sight;optic nerve fibers"
+C72.4,Acoustic nerve,"vestibulocochlear nerve;auditory nerve;8th cranial nerve"
+C72.5,"Cranial nerve, NOS","unspecified cranial nerve;one of the cranial nerves;cranial nerve region"
+C72.8,Overlapping lesion of brain and central nervous system,"multiple CNS sites;combined brain/spinal areas;overlapping central nervous regions"
+C72.9,Nervous system NOS,"unspecified nervous system region;general neural tissue;neural system (unspecified)"
+C73.9,Thyroid gland,"thyroid organ;endocrine thyroid;thyroid tissue"
+C74.0,Adrenal gland cortex,"adrenal cortex;outer adrenal layer;cortical part of adrenal"
+C74.1,Adrenal gland medulla,"adrenal medulla;inner adrenal region;medullary part of adrenal"
+C74.9,Adrenal gland NOS,"adrenal gland (unspecified);suprarenal gland;adrenal organ"
+C75.0,Parathyroid gland,"parathyroid organs;glands regulating calcium;parathyroid tissue"
+C75.1,Pituitary gland,"hypophysis;master endocrine gland;pituitary body"
+C75.2,Craniopharyngeal duct,"Rathke's pouch remnant;craniopharyngeal tract;embryonic duct near pituitary"
+C75.3,Pineal gland,"epiphysis cerebri;pineal body;melatonin-secreting gland"
+C75.4,Carotid body,"chemoreceptor organ;carotid glomus;carotid chemoreceptor"
+C75.5,Aortic body,"aortic chemoreceptor;aortic glomus;paraganglionic organ near aorta"
+C75.8,Overlapping lesion of endocrine glands and related structures,"multiple endocrine sites;combined endocrine tissues;overlapping hormonal glands"
+C75.9,"Endocrine gland, NOS","unspecified endocrine organ;hormone gland (NOS);endocrine tissue"
+C76.0,"Head, face or neck NOS","unspecified head/neck region;craniofacial area (NOS);head/neck (not otherwise specified)"
+C76.1,Thorax NOS,"chest region NOS;thoracic area (unspecified);upper trunk region"
+C76.2,Abdomen NOS,"abdominal region NOS;abdomen (not otherwise specified);belly area"
+C76.3,Pelvis NOS,"pelvic region NOS;pelvis (unspecified);lower trunk area"
+C76.4,Upper limb NOS,"arm region NOS;upper extremity (unspecified);arm/shoulder area"
+C76.5,Lower limb NOS,"leg region NOS;lower extremity (unspecified);leg/foot area"
+C76.7,Other illdefined sites,"ill-defined region;indeterminate anatomical site;unspecified body location"
+C76.8,Overlapping lesion of ill-defined sites,"multiple ill-defined areas;combined unclear regions;overlapping unspecified sites"
+C77.0,"Lymph node face, head ,neck","cervical lymph nodes;head/neck lymph nodes;facial lymphatic nodes"
+C77.1,Intrathoracic lymph node,"thoracic lymph nodes;mediastinal/hilar nodes;chest lymphatic tissue"
+C77.2,Intra-abdominal lymph nodes,"abdominal lymphatic nodes;mesenteric nodes;intra-abdominal nodal tissue"
+C77.3,"Lymph node axilla, arm","axillary lymph nodes;arm pit nodes;upper limb nodal tissue"
+C77.4,"Lymph node inguinal region, leg","inguinal lymph nodes;groin nodes;leg region nodal tissue"
+C77.5,Lymph node pelvic,"pelvic lymph nodes;iliac nodes;pelvic nodal basin"
+C77.8,Lymph nodes of multiple regions,"generalized lymphadenopathy;multiple nodal regions;overlapping lymph node areas"
+C77.9,Lymph node NOS,"lymph node (not otherwise specified);unspecified nodal tissue;lymph gland (NOS)"
+C80.9,Unknown primary site,"unknown origin;primary site not determined;unidentified tumor location"

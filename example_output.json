@@ -1,70 +1,102 @@
 {
-  "EXAM_DATE": "2024-12-10 12:55:08",
-  "PROCEDURE": "CT CHEST WITH CONTRAST",
-  "report": "\n        CT CHEST WITH CONTRAST\n        \n        CLINICAL HISTORY: Follow-up of lung cancer with fungal infection.\n        \n        FINDINGS:\n        1. Right upper lobe mass measures 3.2 x 2.8 cm (previously 4.1 x 3.5 cm),\n           representing partial response to therapy.\n        2. Multiple bilateral pulmonary nodules with surrounding ground-glass halos,\n           largest measuring 8mm in right lower lobe.\n        3. Small cavitary lesion in left lower lobe with air-crescent sign.\n        4. Small right pleural effusion.\n        \n        IMPRESSION:\n        1. Partial response of primary lung tumor.\n        2. Findings consistent with pulmonary fungal infection.\n        3. Small right pleural effusion.\n        ",
-  "modality": "CT",
-  "primary_location": "Upper lobe, lung",
-  "clinical_history": "Follow-up of lung cancer with fungal infection.",
-  "target_lesions": [
-    {
-      "location": "Right upper lobe",
-      "current_value": 3.2,
-      "current_unit": "cm",
-      "standardized_value_mm": 32.0,
-      "prior_value": 4.1,
-      "prior_unit": "cm",
-      "percent_change": -21.951219512195124,
-      "response_category": "Stable Disease",
-      "is_target": true
-    }
-  ],
-  "non_target_lesions": [
-    {
-      "location": "Bilateral pulmonary nodules",
-      "current_value": 8.0,
-      "current_unit": "mm",
-      "standardized_value_mm": 8.0,
-      "is_target": false
-    },
-    {
-      "location": "Left lower lobe cavity",
-      "current_value": 0.0,
-      "current_unit": "mm",
-      "standardized_value_mm": 0.0,
-      "is_target": false
-    }
-  ],
-  "new_lesions": [],
-  "reported_response": "Partial response of primary lung tumor.",
-  "recist_calculated_response": "Stable Disease",
-  "classifications": [
-    {
-      "class_name": "Primary tumor",
-      "description": "Right upper lobe mass showing partial response to therapy, decreased to 3.2 x 2.8 cm from 4.1 x 3.5 cm."
-    },
-    {
-      "class_name": "Infection",
-      "description": "Bilateral pulmonary nodules with surrounding ground-glass halos and small cavitary lesion with air-crescent sign consistent with pulmonary fungal infection."
-    },
-    {
-      "class_name": "Effusion",
-      "description": "Small right pleural effusion."
-    }
-  ],
-  "other_findings": [
-    {
-      "item": "Ground-glass halos",
-      "description": "Surrounds multiple bilateral pulmonary nodules, largest nodule measuring 8mm in right lower lobe."
-    },
-    {
-      "item": "Cavitary lesion",
-      "description": "Small cavitary lesion in left lower lobe displaying an air-crescent sign."
-    }
-  ],
-  "ICDO3_site": "C34.1",
-  "ICDO3_site_term": "Upper lobe, lung",
-  "ICDO3_site_similarity": 1.0,
-  "modality_specific": {
-    "modality_type": "Chest CT"
+  "analysis_timestamp": "2024-12-10T16:54:30.529115",
+  "report_data": {
+    "report": "\n Diagnosis: Lymphoma.\nReason: Follow-up.\nComparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.\nFindings:\nNeck CT with IV contrast:\nThere are unchanged enlarged hypoattenuating left cervical lymph nodes the large\nst seen at levels III measuring 1 cm in short axis.\nThere are unchanged mildly enlarged right supraclavicular lymph nodes, none exce\neding 1 cm in short axis.\nThere is no new cervical lymph node enlargement.\nChest CT with IV contrast:\nThere are unchanged multiple hypoattenuating conglomerate mediastinal lymph node\ns are encasing the aortic arch and its major branches with no significant narrow\ning, for example the subcarinal lymph node measures 2 cm in short axis with no s\nignificant change.\nThere is no new intrathoracic lymph node enlargement.\nThere is no significant axillary lymph node enlargement.\nThe mild pericardial thickening/effusion appears less significant.\nThere is a new trace amount of right pleural effusion.\nThere is no significant left pleural effusion.\nThere is no pulmonary nodule/mass.\nThere is no pulmonary consolidation.\nAbdomen and pelvis CT scan with contrast:\nNormal liver, spleen, pancreas, adrenals and both kidneys.\nThere is no hydronephrosis bilaterally.\nUnremarkable gallbladder.\nThere is no intra or extrahepatic biliary tree dilatation.\nThere is no significant retroperitoneal or pelvic lymph node enlargement.\nThere is no ascites.\nUnremarkable urinary bladder outline.\nThere is no vertebral collapse.\nImpression:\nThere has been no significant interval change regarding the hypoattenuating resi\ndual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan\ndated 2 February 2021.\nDr. Mohammad Mujalli\nRadiologist\n        ",
+    "modality": "CT",
+    "primary_location": "Cervical",
+    "comparison_date": "2 February 2021",
+    "indication": "Follow-up",
+    "target_lesions": [
+      {
+        "location": "left cervical lymph nodes (level III)",
+        "current_value": 1.0,
+        "current_unit": "cm",
+        "standardized_value_mm": 10.0,
+        "prior_value": 1.0,
+        "prior_unit": "cm",
+        "percent_change": 0.0,
+        "response_category": "Stable Disease",
+        "is_target": true
+      },
+      {
+        "location": "subcarinal lymph node",
+        "current_value": 2.0,
+        "current_unit": "cm",
+        "standardized_value_mm": 20.0,
+        "prior_value": 2.0,
+        "prior_unit": "cm",
+        "percent_change": 0.0,
+        "response_category": "Stable Disease",
+        "is_target": true
+      }
+    ],
+    "non_target_lesions": [
+      {
+        "location": "right supraclavicular lymph nodes",
+        "current_value": 1.0,
+        "current_unit": "cm",
+        "standardized_value_mm": 10.0,
+        "prior_value": 1.0,
+        "prior_unit": "cm",
+        "percent_change": 0.0,
+        "is_target": false
+      },
+      {
+        "location": "mild pericardial effusion",
+        "current_value": 0.0,
+        "current_unit": "cm",
+        "standardized_value_mm": 0.0,
+        "prior_value": 0.0,
+        "prior_unit": "cm",
+        "is_target": false
+      },
+      {
+        "location": "trace amount of right pleural effusion",
+        "current_value": 0.0,
+        "current_unit": "cm",
+        "standardized_value_mm": 0.0,
+        "prior_value": 0.0,
+        "prior_unit": "cm",
+        "is_target": false
+      }
+    ],
+    "new_lesions": [],
+    "reported_response": "There has been no significant interval change regarding the hypoattenuating residual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan dated 2 February 2021.",
+    "recist_calculated_response": "Stable Disease",
+    "classifications": [
+      {
+        "class_name": "Lymphadenopathy",
+        "description": "Enlarged cervical and mediastinal lymph nodes with no significant change. Unchanged left cervical lymph nodes at level III measuring 1 cm and unchanged mediastinal lymph nodes encasing the aortic arch measuring 2 cm."
+      },
+      {
+        "class_name": "Other",
+        "description": "Mild pericardial thickening/effusion, new trace amount of right pleural effusion."
+      },
+      {
+        "class_name": "Normal",
+        "description": "Normal findings in abdomen and pelvis CT, including liver, spleen, pancreas, gonads, and kidneys."
+      }
+    ],
+    "other_findings": [
+      {
+        "item": "Pericardial Effusion",
+        "description": "Mild pericardial thickening/effusion appears less significant."
+      },
+      {
+        "item": "Pleural Effusion",
+        "description": "New trace amount of right pleural effusion."
+      },
+      {
+        "item": "Cervical Lymphadenopathy",
+        "description": "Unchanged enlarged hypoattenuating left cervical lymph nodes and right supraclavicular lymph nodes."
+      },
+      {
+        "item": "Mediastinal Lymphadenopathy",
+        "description": "Unchanged conglomerate mediastinal lymph nodes encasing aortic arch."
+      }
+    ],
+    "ICDO3_site": "C53.9",
+    "ICDO3_site_term": "Cervix uteri",
+    "ICDO3_site_similarity": 0.6657474040985107
   }
 }

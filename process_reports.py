@@ -24,7 +24,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-async def process_reports(input_file: str, output_file: str, num_reports: int = 10):
+async def process_reports(input_file: str, output_file: str, num_reports: int = 200):
     """
     Process reports from input CSV file and save results
     
@@ -38,52 +38,55 @@ async def process_reports(input_file: str, output_file: str, num_reports: int = 
         logger.info(f"Reading input file: {input_file}")
         df = pd.read_csv(input_file)
         
-        # Select first n reports
-        df = df.head(num_reports)
-        
-        # Load reference data from resources
-        resources_path = Path(__file__).parent / 'resources'
-        try:
-            logger.info("Loading reference data...")
-            modalities_df = pd.read_csv(resources_path / 'modalities.csv')
-            topography_df = pd.read_csv(resources_path / 'ICDO3Topography.csv')
-        except FileNotFoundError as e:
-            logger.error(f"Required resource files not found in {resources_path}")
-            logger.error("Please ensure modalities.csv and ICDO3Topography.csv exist in the resources directory")
-            raise
-        
         # Initialize extractor
+        resources_path = Path(__file__).parent / 'resources'
+        modalities_df = pd.read_csv(resources_path / 'modalities.csv')
+        topography_df = pd.read_csv(resources_path / 'ICDO3Topography.csv')
         extractor = RadiologyExtractor(modalities_df, topography_df)
         
-        # Process each report
+        # Process reports until we have num_reports successful results
         results = []
-        for idx, row in tqdm(df.iterrows(), total=len(df), desc="Processing reports"):
-            try:
-                report_info = {
-                    'MRN': row['MRN'],
-                    'EXAM_DATE': row['EXAM DATE/TIME'],
-                    'PROCEDURE': row['PROCEDURE'],
-                    'REPORT': row['REPORT']
-                }
+        processed = 0
+        idx = 0
+        
+        with tqdm(total=num_reports, desc="Processing reports") as pbar:
+            while processed < num_reports and idx < len(df):
+                row = df.iloc[idx]
+                try:
+                    report_info = {
+                        'MRN': row['MRN'],
+                        'EXAM_DATE': row['EXAM DATE/TIME'], 
+                        'PROCEDURE': row['PROCEDURE'],
+                        'REPORT': row['REPORT']
+                    }
+                    
+                    # Process report text
+                    result = await extractor.process_report(row['REPORT'])
+                    
+                    # Combine base info with extraction results
+                    combined_result = {
+                        **report_info,
+                        **result.dict(exclude_none=True)  # Exclude None values for cleaner output
+                    }
+                    
+                    results.append(combined_result)
+                    processed += 1
+                    pbar.update(1)
+                    
+                except Exception as e:
+                    logger.error(f"Error processing report {idx + 1}: {str(e)}")
+                    error_result = {
+                        **report_info,
+                        'error': str(e)
+                    }
+                    results.append(error_result)
                 
-                # Process report text
-                result = await extractor.process_report(row['REPORT'])
+                idx += 1
                 
-                # Combine base info with extraction results
-                combined_result = {
-                    **report_info,
-                    **result.dict(exclude_none=True)  # Exclude None values for cleaner output
-                }
-                
-                results.append(combined_result)
-                
-            except Exception as e:
-                logger.error(f"Error processing report {idx + 1}: {str(e)}")
-                error_result = {
-                    **report_info,
-                    'error': str(e)
-                }
-                results.append(error_result)
+                # If we've processed all available reports but haven't reached num_reports
+                if idx >= len(df) and processed < num_reports:
+                    logger.warning(f"Only {processed} reports available in input file")
+                    break
         
         # Save results
         logger.info(f"Saving results to {output_file}")
@@ -98,7 +101,7 @@ async def process_reports(input_file: str, output_file: str, num_reports: int = 
         results_df.to_csv(output_file, index=False)
         
         # Print summary
-        logger.info(f"Successfully processed {len(results_df)} reports")
+        logger.info(f"Successfully processed {processed} reports")
         if 'error' in results_df.columns:
             error_count = results_df['error'].notna().sum()
             logger.info(f"Errors encountered: {error_count}")
@@ -130,13 +133,13 @@ async def main():
         return
     
     input_file = "data/Results.csv"
-    output_file = "radiology_results_10.csv"
+    output_file = "radiology_results_200.csv"
     
     if not Path(input_file).exists():
         logger.error(f"Input file not found: {input_file}")
         return
     
-    await process_reports(input_file, output_file)
+    await process_reports(input_file, output_file, num_reports=200)
 
 if __name__ == "__main__":
     asyncio.run(main())
