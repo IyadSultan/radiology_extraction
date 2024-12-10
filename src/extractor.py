@@ -3,7 +3,7 @@
 import warnings
 import json
 import pandas as pd
-from typing import Optional, List, Dict, Any, Tuple
+from typing import Optional, List, Dict, Any, Union
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -15,7 +15,10 @@ from pathlib import Path
 from enum import Enum
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 warnings.filterwarnings('ignore')
@@ -28,6 +31,48 @@ class ResponseCategory(str, Enum):
     PROGRESSIVE_DISEASE = "Progressive Disease"
     NOT_EVALUABLE = "Not Evaluable"
 
+class ModalityType(str, Enum):
+    """Supported modality types"""
+    MAMMOGRAPHY = "Mammography"
+    CHEST_CT = "Chest CT"
+    BRAIN_IMAGING = "Brain Imaging"
+    OTHER = "Other"
+
+# Modality-specific models
+class MammographyFindings(BaseModel):
+    """Mammography-specific findings"""
+    birads_category: str = Field(description="BI-RADS assessment category")
+    breast_density: str = Field(description="Breast density category")
+    masses: List[Dict[str, str]] = Field(default_factory=list)
+    calcifications: List[Dict[str, str]] = Field(default_factory=list)
+    architectural_distortion: Optional[bool] = None
+    asymmetries: List[Dict[str, str]] = Field(default_factory=list)
+
+class ChestCTFungalFindings(BaseModel):
+    """Chest CT findings focused on fungal infections"""
+    halo_sign: List[Dict[str, str]] = Field(default_factory=list)
+    cavitations: List[Dict[str, str]] = Field(default_factory=list)
+    fungal_nodules: List[Dict[str, str]] = Field(default_factory=list)
+    ground_glass_opacities: List[Dict[str, str]] = Field(default_factory=list)
+    air_crescent_signs: List[Dict[str, str]] = Field(default_factory=list)
+    other_fungal_findings: List[Dict[str, str]] = Field(default_factory=list)
+
+class BrainTumorFindings(BaseModel):
+    """Brain imaging findings focused on tumors"""
+    tumor_details: Dict[str, Any] = Field(...)
+    edema: Optional[Dict[str, str]] = None
+    mass_effect: Optional[Dict[str, str]] = None
+    enhancement_pattern: Optional[str] = None
+    brain_region: str = Field(description="Specific brain region affected")
+    additional_features: List[Dict[str, str]] = Field(default_factory=list)
+
+class ModalitySpecific(BaseModel):
+    """Container for modality-specific findings"""
+    modality_type: ModalityType
+    mammography: Optional[MammographyFindings] = None
+    chest_ct: Optional[ChestCTFungalFindings] = None
+    brain_tumor: Optional[BrainTumorFindings] = None
+
 class RECISTMeasurement(BaseModel):
     """Model for RECIST measurements"""
     location: str = Field(description="Anatomical location of measurement")
@@ -38,7 +83,7 @@ class RECISTMeasurement(BaseModel):
     prior_unit: Optional[str] = Field(default=None)
     percent_change: Optional[float] = Field(default=None)
     response_category: Optional[str] = Field(default=None)
-    is_target: bool = Field(default=False, description="Whether this is a target lesion")
+    is_target: bool = Field(default=False)
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -47,18 +92,15 @@ class RECISTMeasurement(BaseModel):
     def standardize_measurements(self):
         """Convert measurements to mm and calculate response"""
         if self.current_value:
-            # Convert to mm
             if self.current_unit == 'cm':
                 self.standardized_value_mm = self.current_value * 10
             elif self.current_unit == 'mm':
                 self.standardized_value_mm = self.current_value
             
-            # Calculate change if prior measurement exists
             if self.prior_value and self.prior_unit:
                 prior_mm = self.prior_value * 10 if self.prior_unit == 'cm' else self.prior_value
                 self.percent_change = ((self.standardized_value_mm - prior_mm) / prior_mm) * 100
                 
-                # Determine response category for target lesions
                 if self.is_target:
                     if self.standardized_value_mm == 0:
                         self.response_category = ResponseCategory.COMPLETE_RESPONSE.value
@@ -82,52 +124,40 @@ class OtherFinding(BaseModel):
 
 class RadiologyReport(BaseModel):
     """Model for structured radiology report data"""
-    # Study Information
     modality: str = Field(description="Imaging modality (CT/MRI/PET/etc)")
     primary_location: str = Field(description="Anatomical region of primary tumor using ICDO3")
     study_date: Optional[str] = Field(default=None)
     comparison_date: Optional[str] = Field(default=None)
     clinical_history: Optional[str] = Field(default=None)
-    indication: Optional[str] = Field(default=None, description="Indication for imaging study")
+    indication: Optional[str] = Field(default=None)
     
-    # Measurements and RECIST
     target_lesions: List[RECISTMeasurement] = Field(default_factory=list)
     non_target_lesions: List[RECISTMeasurement] = Field(default_factory=list)
     new_lesions: List[Dict[str, Any]] = Field(default_factory=list)
     
-    # Response Assessment
-    reported_response: Optional[str] = Field(
-        default=None,
-        description="Response assessment as stated in the report, using standardized RECIST response categories"
-    )
-    recist_calculated_response: Optional[str] = Field(
-        default=None,
-        description="Response calculated using RECIST 1.1 criteria"
-    )
+    reported_response: Optional[str] = Field(default=None)
+    recist_calculated_response: Optional[str] = Field(default=None)
     
-    # Classifications
     classifications: List[ClassificationResult] = Field(default_factory=list)
     other_findings: List[OtherFinding] = Field(default_factory=list)
     
-    # Location Coding
     ICDO3_site: Optional[str] = Field(default=None)
     ICDO3_site_term: Optional[str] = Field(default=None)
     ICDO3_site_similarity: Optional[float] = Field(default=None)
+    
+    modality_specific: Optional[ModalitySpecific] = None
 
     def calculate_recist_response(self) -> str:
         """Calculate overall RECIST response"""
-        # Check for new lesions first
         if self.new_lesions:
             return ResponseCategory.PROGRESSIVE_DISEASE.value
             
-        # Get responses from target lesions
         target_responses = [lesion.response_category for lesion in self.target_lesions 
                           if lesion.response_category]
                           
         if not target_responses:
             return ResponseCategory.NOT_EVALUABLE.value
             
-        # Calculate overall response
         if all(r == ResponseCategory.COMPLETE_RESPONSE.value for r in target_responses):
             return ResponseCategory.COMPLETE_RESPONSE.value
         elif any(r == ResponseCategory.PROGRESSIVE_DISEASE.value for r in target_responses):
@@ -151,13 +181,30 @@ class ModalityMapper:
             query = self.vectorizer.transform([text])
             sims = cosine_similarity(query, self.vectors).flatten()
             idx = sims.argmax()
+            
             if sims[idx] < threshold:
                 return None
-            return {
+                
+            result = {
                 'standard_name': self.modalities_df.iloc[idx]['Modality'],
                 'category': self.modalities_df.iloc[idx]['Category'],
                 'similarity': float(sims[idx])
             }
+            
+            # Determine modality type
+            if 'mammogram' in text.lower() or 'mammography' in text.lower():
+                result['modality_type'] = ModalityType.MAMMOGRAPHY
+            elif 'chest' in text.lower() and 'ct' in text.lower():
+                result['modality_type'] = ModalityType.CHEST_CT
+            elif any(term in text.lower() for term in ['brain', 'head']) and \
+                 any(term in text.lower() for term in ['ct', 'mri', 'magnetic']):
+                result['modality_type'] = ModalityType.BRAIN_IMAGING
+            else:
+                result['modality_type'] = ModalityType.OTHER
+            
+            print(f"Modality matching result: {result}")
+            return result
+            
         except Exception as e:
             logger.error(f"Error finding modality match: {str(e)}")
             return None
@@ -198,8 +245,8 @@ class ExtractionDependencies:
     modality_mapper: Any
     location_mapper: Any
 
-# Initialize extraction agent
-extraction_agent = Agent(
+# Initialize standard extraction agent
+standard_extraction_agent = Agent(
     "openai:gpt-4o",
     retries=3,
     deps_type=ExtractionDependencies,
@@ -211,8 +258,10 @@ extraction_agent = Agent(
     
     1. Study Information:
        - modality (CT/MRI/PET/etc)
-       - primary_location (anatomical area of primary tumor using ICDO3)
+       - primary_location (anatomical region of primary tumor using ICDO3)
        - dates (study and comparison)
+       - clinical_history
+       - indication
        
     2. Measurements and RECIST:
        - For each lesion: current size, prior size if available
@@ -220,19 +269,19 @@ extraction_agent = Agent(
        - Record new lesions if any
        
     3. Response Assessment:
-       - reported_response: Extract the response assessment as stated by the radiologist
+       - reported_response: Extract the response assessment as stated
        - recist_calculated_response will be calculated automatically
        
     4. Classifications:
-       Classify the report into all applicable categories with descriptions:
+       Classify findings into these categories:
        - Normal: No significant abnormality
-       - Infection: Any infectious process (pneumonia, abscess, etc.)
+       - Infection: Any infectious process
        - Metastasis: Evidence of metastatic disease
        - Primary tumor: Primary tumor findings
        - Effusion: Pleural effusion, pericardial effusion, or ascites
-       - Trauma: Evidence of injury or trauma
-       - Hemorrhage: Any bleeding or hemorrhage
-       - Thrombosis: Blood clots, emboli, or thrombosis
+       - Trauma: Evidence of injury
+       - Hemorrhage: Any bleeding
+       - Thrombosis: Blood clots or emboli
        - Others: Any other significant findings
        
     5. Structure output:
@@ -243,24 +292,67 @@ extraction_agent = Agent(
            {"item": "<finding type>", "description": "<detailed description>"}
        ]
        
-    Only include information explicitly stated in the report.
-    Provide detailed, specific descriptions for each classification.
+    Only include explicitly stated information.
+    Provide detailed, specific descriptions for each finding.
     """
 )
 
-@extraction_agent.tool
+# Initialize modality-specific extraction agent
+modality_specific_agent = Agent(
+    "openai:gpt-4o",
+    retries=3,
+    deps_type=ExtractionDependencies,
+    result_type=ModalitySpecific,
+    system_prompt="""
+    You are an expert radiologist focusing on modality-specific findings extraction.
+    Based on the identified modality type, extract relevant specialized information:
+
+    For Mammography:
+    - BI-RADS category
+    - Breast density
+    - Details of masses and calcifications (location, type)
+    - Architectural distortion
+    - Asymmetries
+
+    For Chest CT (Fungal Infections):
+    - Halo sign presence and details
+    - Cavitations
+    - Nodules consistent with fungal disease
+    - Ground-glass opacities
+    - Air-crescent signs
+    - Other fungal-specific findings
+
+    For Brain Imaging (Tumors):
+    - Tumor location (specific brain region)
+    - Size and characteristics
+    - Edema presence and extent
+    - Mass effect
+    - Enhancement pattern
+    - Additional features
+
+    Return findings in the appropriate structure based on modality type.
+    Only include explicitly stated findings.
+    Provide detailed descriptions for each finding.
+    """
+)
+
+@standard_extraction_agent.tool
 async def find_modality(ctx: RunContext[ExtractionDependencies], text: str):
     """Tool for matching imaging modalities"""
     result = ctx.deps.modality_mapper.find_closest_modality(text)
     print(f"Modality mapping result: {result}")
     return result
 
-@extraction_agent.tool
+@standard_extraction_agent.tool
 async def find_location(ctx: RunContext[ExtractionDependencies], text: str):
     """Tool for matching anatomical locations"""
     result = ctx.deps.location_mapper.find_closest_location(text)
     print(f"Location mapping result: {result}")
     return result
+
+# Add the same tools to modality-specific agent
+modality_specific_agent.tool(find_modality)
+modality_specific_agent.tool(find_location)
 
 class RadiologyExtractor:
     """Main class for extracting information from radiology reports"""
@@ -270,9 +362,9 @@ class RadiologyExtractor:
         self.location_mapper = LocationMapper(topography_df)
 
     async def process_report(self, text: str) -> RadiologyReport:
-        """Process a single radiology report"""
+        """Process a single radiology report using two-pass extraction"""
         try:
-            logger.info("Starting extraction...")
+            logger.info("Starting standard extraction...")
             
             # Create dependencies
             deps = ExtractionDependencies(
@@ -280,10 +372,10 @@ class RadiologyExtractor:
                 location_mapper=self.location_mapper
             )
             
-            # Extract using AI model
-            result = await extraction_agent.run(text, deps=deps)
+            # First pass: Standard extraction
+            result = await standard_extraction_agent.run(text, deps=deps)
             
-            # Match location code for body region
+            # Match location code for primary location
             if result.data.primary_location:
                 logger.info(f"Matching location for: {result.data.primary_location}")
                 location_match = await find_location(
@@ -302,11 +394,72 @@ class RadiologyExtractor:
             # Calculate RECIST response
             result.data.recist_calculated_response = result.data.calculate_recist_response()
             
+            # Second pass: Modality-specific extraction
+            modality_result = await find_modality(
+                RunContext(deps=deps, retry=0, tool_name="find_modality"),
+                text[:200]  # Use first part of report for modality detection
+            )
+            
+            if modality_result and 'modality_type' in modality_result:
+                modality_type = modality_result['modality_type']
+                logger.info(f"Detected modality type: {modality_type}")
+                
+                if modality_type != ModalityType.OTHER:
+                    logger.info("Performing modality-specific extraction...")
+                    try:
+                        modality_specific_result = await modality_specific_agent.run(
+                            text,
+                            context={'modality_type': modality_type},
+                            deps=deps
+                        )
+                        result.data.modality_specific = modality_specific_result.data
+                    except Exception as e:
+                        logger.error(f"Error in modality-specific extraction: {str(e)}")
+            
             return result.data
             
         except Exception as e:
             logger.error("Error processing report", exc_info=True)
             raise
+
+async def process_batch(reports_df: pd.DataFrame,
+                       extractor: RadiologyExtractor,
+                       batch_size: int = 10) -> pd.DataFrame:
+    """Process a batch of reports"""
+    results = []
+    total = len(reports_df)
+    
+    logger.info(f"Processing {total} reports in batches of {batch_size}")
+    
+    for idx, row in enumerate(reports_df.iterrows(), 1):
+        try:
+            _, report_row = row
+            logger.info(f"Processing report {idx}/{total}")
+            
+            result = await extractor.process_report(report_row['REPORT'])
+            
+            # Combine with metadata
+            result_dict = {
+                'MRN': report_row.get('MRN'),
+                'EXAM_DATE': report_row.get('EXAM DATE/TIME'),
+                'PROCEDURE': report_row.get('PROCEDURE'),
+                **result.dict(exclude_none=True)
+            }
+            results.append(result_dict)
+            
+        except Exception as e:
+            logger.error(f"Error processing report {idx}: {str(e)}")
+            results.append({
+                'MRN': report_row.get('MRN'),
+                'EXAM_DATE': report_row.get('EXAM DATE/TIME'),
+                'PROCEDURE': report_row.get('PROCEDURE'),
+                'error': str(e)
+            })
+            
+        if idx % batch_size == 0:
+            logger.info(f"Completed {idx}/{total} reports")
+    
+    return pd.DataFrame(results)
 
 async def main():
     """Main function for demonstration"""
@@ -326,29 +479,49 @@ async def main():
         # Initialize extractor
         extractor = RadiologyExtractor(modalities_df, topography_df)
         
-        # Example report
+        # Check if we're processing a batch
+        input_file = Path('Results.csv')
+        if input_file.exists():
+            logger.info("Processing batch from Results.csv...")
+            reports_df = pd.read_csv(input_file)
+            results_df = await process_batch(reports_df, extractor)
+            output_file = 'radiology_results.csv'
+            results_df.to_csv(output_file, index=False)
+            logger.info(f"Batch processing complete. Results saved to {output_file}")
+            
+            # Print summary
+            total_reports = len(results_df)
+            error_reports = results_df['error'].notna().sum() if 'error' in results_df.columns else 0
+            success_reports = total_reports - error_reports
+            
+            print("\nProcessing Summary:")
+            print(f"Total Reports: {total_reports}")
+            print(f"Successfully Processed: {success_reports}")
+            print(f"Errors: {error_reports}")
+            
+            return
+        
+        # Example report for testing
         example_report = """
         CT CHEST WITH CONTRAST
         
-        CLINICAL HISTORY: Follow-up of lung cancer.
+        CLINICAL HISTORY: Follow-up of lung cancer with fungal infection.
         
         FINDINGS:
         1. Right upper lobe mass measures 3.2 x 2.8 cm (previously 4.1 x 3.5 cm),
            representing partial response to therapy.
-        2. Multiple bilateral pulmonary nodules consistent with metastases,
-           largest measuring 8mm in right lower lobe (previously 12mm).
-        3. Small right pleural effusion.
-        4. Right lower lobe consolidation suggesting pneumonia.
-        5. Small subsegmental pulmonary embolism in the left lower lobe.
+        2. Multiple bilateral pulmonary nodules with surrounding ground-glass halos,
+           largest measuring 8mm in right lower lobe.
+        3. Small cavitary lesion in left lower lobe with air-crescent sign.
+        4. Small right pleural effusion.
         
         IMPRESSION:
-        1. Partial response to therapy in primary lung tumor and metastases.
-        2. New right lower lobe pneumonia.
-        3. Acute pulmonary embolism.
-        4. Small right pleural effusion.
+        1. Partial response of primary lung tumor.
+        2. Findings consistent with pulmonary fungal infection.
+        3. Small right pleural effusion.
         """
         
-        # Process report
+        # Process single report
         result = await extractor.process_report(example_report)
         
         # Print results
@@ -358,14 +531,14 @@ async def main():
         # Basic Information
         print("\nStudy Information:")
         print(f"Modality: {result.modality}")
-        print(f"Body Region: {result.primary_location}")
+        print(f"Primary Location: {result.primary_location}")
         if result.ICDO3_site:
             print(f"ICD-O Site: {result.ICDO3_site} ({result.ICDO3_site_term})")
         
         # Response Assessment
         print("\nResponse Assessment:")
         print(f"Reported Response: {result.reported_response}")
-        print(f"RECIST Calculated Response: {result.recist_calculated_response}")
+        print(f"RECIST Calculated: {result.recist_calculated_response}")
         
         # Target Lesions
         if result.target_lesions:
@@ -392,25 +565,19 @@ async def main():
                 print(f"\n{classification.class_name}:")
                 print(f"  {classification.description}")
         
-        # Other Findings
-        if result.other_findings:
-            print("\nOther Findings:")
-            for finding in result.other_findings:
-                print(f"\n{finding.item}:")
-                print(f"  {finding.description}")
+        # Modality-specific findings
+        if result.modality_specific:
+            print("\nModality-Specific Findings:")
+            print(json.dumps(
+                result.modality_specific.dict(exclude_none=True),
+                indent=2
+            ))
         
         # Save complete output
         output_file = Path('example_output.json')
         with open(output_file, 'w') as f:
             json.dump(result.dict(exclude_none=True), f, indent=2)
         print(f"\nComplete results saved to {output_file}")
-        
-        # Print summary statistics
-        print("\nSummary Statistics:")
-        print(f"Target Lesions: {len(result.target_lesions)}")
-        print(f"Non-target Lesions: {len(result.non_target_lesions)}")
-        print(f"Classifications: {len(result.classifications)}")
-        print(f"Other Findings: {len(result.other_findings)}")
         
     except Exception as e:
         logger.error(f"Error in main execution: {str(e)}", exc_info=True)

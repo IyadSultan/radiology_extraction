@@ -1,7 +1,7 @@
 {
   "modality": "CT",
-  "primary_location": "C34.1",
-  "clinical_history": "Follow-up of lung cancer.",
+  "primary_location": "Upper lobe, lung",
+  "clinical_history": "Follow-up of lung cancer with fungal infection.",
   "target_lesions": [
     {
       "location": "Right upper lobe",
@@ -17,56 +17,81 @@
   ],
   "non_target_lesions": [
     {
-      "location": "Right lower lobe",
+      "location": "Bilateral pulmonary nodules, largest in right lower lobe",
       "current_value": 8.0,
       "current_unit": "mm",
       "standardized_value_mm": 8.0,
-      "prior_value": 12.0,
-      "prior_unit": "mm",
-      "percent_change": -33.33333333333333,
+      "is_target": false
+    },
+    {
+      "location": "Left lower lobe cavitary lesion",
+      "current_value": 0.0,
+      "current_unit": "cm",
+      "standardized_value_mm": 0.0,
+      "is_target": false
+    },
+    {
+      "location": "Right pleural effusion",
+      "current_value": 0.0,
+      "current_unit": "cm",
+      "standardized_value_mm": 0.0,
       "is_target": false
     }
   ],
   "new_lesions": [],
-  "reported_response": "Partial response to therapy in primary lung tumor and metastases.",
+  "reported_response": "Partial response of primary lung tumor",
   "recist_calculated_response": "Stable Disease",
   "classifications": [
     {
       "class_name": "Metastasis",
-      "description": "Multiple bilateral pulmonary nodules consistent with metastases, decrease in size, partial response to therapy."
+      "description": "Multiple bilateral pulmonary nodules with surrounding ground-glass halos."
+    },
+    {
+      "class_name": "Infection",
+      "description": "Findings consistent with pulmonary fungal infection; small cavitary lesion in left lower lobe with air-crescent sign."
     },
     {
       "class_name": "Primary tumor",
-      "description": "Right upper lobe mass showing partial response to therapy."
+      "description": "Right upper lobe mass, partial response to therapy."
     },
     {
       "class_name": "Effusion",
       "description": "Small right pleural effusion."
-    },
-    {
-      "class_name": "Infection",
-      "description": "Right lower lobe consolidation suggesting pneumonia."
-    },
-    {
-      "class_name": "Thrombosis",
-      "description": "Small subsegmental pulmonary embolism in the left lower lobe."
     }
   ],
-  "other_findings": [
-    {
-      "item": "Response Assessment",
-      "description": "Partial response to therapy in primary lung tumor and metastases."
-    },
-    {
-      "item": "New Lesion",
-      "description": "Right lower lobe pneumonia."
-    },
-    {
-      "item": "Acute Condition",
-      "description": "Acute pulmonary embolism."
-    }
-  ],
+  "other_findings": [],
   "ICDO3_site": "C34.1",
   "ICDO3_site_term": "Upper lobe, lung",
-  "ICDO3_site_similarity": 0.7665658005504401
+  "ICDO3_site_similarity": 1.0,
+  "modality_specific": {
+    "modality_type": "Chest CT",
+    "chest_ct": {
+      "halo_sign": [
+        {
+          "location": "Bilateral pulmonary nodules, largest in right lower lobe"
+        }
+      ],
+      "cavitations": [
+        {
+          "location": "Left lower lobe"
+        }
+      ],
+      "fungal_nodules": [
+        {
+          "location": "Bilateral pulmonary nodules"
+        }
+      ],
+      "ground_glass_opacities": [
+        {
+          "location": "Surrounding bilateral pulmonary nodules"
+        }
+      ],
+      "air_crescent_signs": [
+        {
+          "location": "Left lower lobe cavitary lesion"
+        }
+      ],
+      "other_fungal_findings": []
+    }
+  }
 }
