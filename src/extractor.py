@@ -13,6 +13,9 @@ from dataclasses import dataclass
 import logging
 from pathlib import Path
 from enum import Enum
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -124,8 +127,9 @@ class OtherFinding(BaseModel):
 
 class RadiologyReport(BaseModel):
     """Model for structured radiology report data"""
+    report: str = Field(description="Original report text")
     modality: str = Field(description="Imaging modality (CT/MRI/PET/etc)")
-    primary_location: str = Field(description="Anatomical region of primary tumor using ICDO3")
+    primary_location: str = Field(description="Anatomical region of primary tumor using ICDO3 description (not code)")
     study_date: Optional[str] = Field(default=None)
     comparison_date: Optional[str] = Field(default=None)
     clinical_history: Optional[str] = Field(default=None)
@@ -375,6 +379,9 @@ class RadiologyExtractor:
             # First pass: Standard extraction
             result = await standard_extraction_agent.run(text, deps=deps)
             
+            # Store original report text
+            result.data.report = text
+            
             # Match location code for primary location
             if result.data.primary_location:
                 logger.info(f"Matching location for: {result.data.primary_location}")
@@ -461,6 +468,7 @@ async def process_batch(reports_df: pd.DataFrame,
     
     return pd.DataFrame(results)
 
+# main
 async def main():
     """Main function for demonstration"""
     try:
@@ -521,6 +529,12 @@ async def main():
         3. Small right pleural effusion.
         """
         
+        # Build example metadata for the report
+        example_metadata = {
+            'EXAM DATE/TIME': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'PROCEDURE': 'CT CHEST WITH CONTRAST'
+        }
+        
         # Process single report
         result = await extractor.process_report(example_report)
         
@@ -573,15 +587,21 @@ async def main():
                 indent=2
             ))
         
-        # Save complete output
+        # Save complete output with metadata
         output_file = Path('example_output.json')
+        output_data = {
+            'EXAM_DATE': example_metadata['EXAM DATE/TIME'],
+            'PROCEDURE': example_metadata['PROCEDURE'],
+            **result.dict(exclude_none=True)
+        }
         with open(output_file, 'w') as f:
-            json.dump(result.dict(exclude_none=True), f, indent=2)
+            json.dump(output_data, f, indent=2)
         print(f"\nComplete results saved to {output_file}")
         
     except Exception as e:
         logger.error(f"Error in main execution: {str(e)}", exc_info=True)
         raise
+
 
 if __name__ == "__main__":
     import asyncio

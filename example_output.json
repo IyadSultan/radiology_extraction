@@ -1,4 +1,7 @@
 {
+  "EXAM_DATE": "2024-12-10 12:55:08",
+  "PROCEDURE": "CT CHEST WITH CONTRAST",
+  "report": "\n        CT CHEST WITH CONTRAST\n        \n        CLINICAL HISTORY: Follow-up of lung cancer with fungal infection.\n        \n        FINDINGS:\n        1. Right upper lobe mass measures 3.2 x 2.8 cm (previously 4.1 x 3.5 cm),\n           representing partial response to therapy.\n        2. Multiple bilateral pulmonary nodules with surrounding ground-glass halos,\n           largest measuring 8mm in right lower lobe.\n        3. Small cavitary lesion in left lower lobe with air-crescent sign.\n        4. Small right pleural effusion.\n        \n        IMPRESSION:\n        1. Partial response of primary lung tumor.\n        2. Findings consistent with pulmonary fungal infection.\n        3. Small right pleural effusion.\n        ",
   "modality": "CT",
   "primary_location": "Upper lobe, lung",
   "clinical_history": "Follow-up of lung cancer with fungal infection.",
@@ -17,81 +20,51 @@
   ],
   "non_target_lesions": [
     {
-      "location": "Bilateral pulmonary nodules, largest in right lower lobe",
+      "location": "Bilateral pulmonary nodules",
       "current_value": 8.0,
       "current_unit": "mm",
       "standardized_value_mm": 8.0,
       "is_target": false
     },
     {
-      "location": "Left lower lobe cavitary lesion",
+      "location": "Left lower lobe cavity",
       "current_value": 0.0,
-      "current_unit": "cm",
-      "standardized_value_mm": 0.0,
-      "is_target": false
-    },
-    {
-      "location": "Right pleural effusion",
-      "current_value": 0.0,
-      "current_unit": "cm",
+      "current_unit": "mm",
       "standardized_value_mm": 0.0,
       "is_target": false
     }
   ],
   "new_lesions": [],
-  "reported_response": "Partial response of primary lung tumor",
+  "reported_response": "Partial response of primary lung tumor.",
   "recist_calculated_response": "Stable Disease",
   "classifications": [
     {
-      "class_name": "Metastasis",
-      "description": "Multiple bilateral pulmonary nodules with surrounding ground-glass halos."
+      "class_name": "Primary tumor",
+      "description": "Right upper lobe mass showing partial response to therapy, decreased to 3.2 x 2.8 cm from 4.1 x 3.5 cm."
     },
     {
       "class_name": "Infection",
-      "description": "Findings consistent with pulmonary fungal infection; small cavitary lesion in left lower lobe with air-crescent sign."
-    },
-    {
-      "class_name": "Primary tumor",
-      "description": "Right upper lobe mass, partial response to therapy."
+      "description": "Bilateral pulmonary nodules with surrounding ground-glass halos and small cavitary lesion with air-crescent sign consistent with pulmonary fungal infection."
     },
     {
       "class_name": "Effusion",
       "description": "Small right pleural effusion."
     }
   ],
-  "other_findings": [],
+  "other_findings": [
+    {
+      "item": "Ground-glass halos",
+      "description": "Surrounds multiple bilateral pulmonary nodules, largest nodule measuring 8mm in right lower lobe."
+    },
+    {
+      "item": "Cavitary lesion",
+      "description": "Small cavitary lesion in left lower lobe displaying an air-crescent sign."
+    }
+  ],
   "ICDO3_site": "C34.1",
   "ICDO3_site_term": "Upper lobe, lung",
   "ICDO3_site_similarity": 1.0,
   "modality_specific": {
-    "modality_type": "Chest CT",
-    "chest_ct": {
-      "halo_sign": [
-        {
-          "location": "Bilateral pulmonary nodules, largest in right lower lobe"
-        }
-      ],
-      "cavitations": [
-        {
-          "location": "Left lower lobe"
-        }
-      ],
-      "fungal_nodules": [
-        {
-          "location": "Bilateral pulmonary nodules"
-        }
-      ],
-      "ground_glass_opacities": [
-        {
-          "location": "Surrounding bilateral pulmonary nodules"
-        }
-      ],
-      "air_crescent_signs": [
-        {
-          "location": "Left lower lobe cavitary lesion"
-        }
-      ],
-      "other_fungal_findings": []
-    }
+    "modality_type": "Chest CT"
   }
 }
