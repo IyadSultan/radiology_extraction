@@ -1,47 +1,72 @@
 {
   "modality": "CT",
-  "body_region": "chest",
-  "study_date": "2024-01-15",
-  "comparison_date": "2023-10-15",
-  "clinical_history": "Lung cancer follow-up.",
+  "primary_location": "C34.1",
+  "clinical_history": "Follow-up of lung cancer.",
   "target_lesions": [
     {
-      "location": "Right upper lobe mass",
-      "current_value": 32.0,
-      "current_unit": "mm",
+      "location": "Right upper lobe",
+      "current_value": 3.2,
+      "current_unit": "cm",
       "standardized_value_mm": 32.0,
-      "prior_value": 41.0,
-      "prior_unit": "mm",
+      "prior_value": 4.1,
+      "prior_unit": "cm",
       "percent_change": -21.951219512195124,
-      "response_category": "SD"
+      "response_category": "Stable Disease",
+      "is_target": true
     }
   ],
   "non_target_lesions": [
     {
-      "location": "Right lower lobe pulmonary nodule",
+      "location": "Right lower lobe",
       "current_value": 8.0,
       "current_unit": "mm",
       "standardized_value_mm": 8.0,
       "prior_value": 12.0,
       "prior_unit": "mm",
       "percent_change": -33.33333333333333,
-      "response_category": "PR"
-    },
-    {
-      "location": "Multiple bilateral pulmonary nodules",
-      "current_value": 0.0,
-      "current_unit": "mm",
-      "standardized_value_mm": 0.0,
-      "prior_value": 0.0,
-      "prior_unit": "mm",
-      "percent_change": null,
-      "response_category": null
+      "is_target": false
     }
   ],
   "new_lesions": [],
-  "tumor_response": "Partial response to therapy",
-  "overall_assessment": "Decrease in size of right upper lobe mass and pulmonary nodules, stable small right pleural effusion.",
+  "reported_response": "Partial response to therapy in primary lung tumor and metastases.",
+  "recist_calculated_response": "Stable Disease",
+  "classifications": [
+    {
+      "class_name": "Metastasis",
+      "description": "Multiple bilateral pulmonary nodules consistent with metastases, decrease in size, partial response to therapy."
+    },
+    {
+      "class_name": "Primary tumor",
+      "description": "Right upper lobe mass showing partial response to therapy."
+    },
+    {
+      "class_name": "Effusion",
+      "description": "Small right pleural effusion."
+    },
+    {
+      "class_name": "Infection",
+      "description": "Right lower lobe consolidation suggesting pneumonia."
+    },
+    {
+      "class_name": "Thrombosis",
+      "description": "Small subsegmental pulmonary embolism in the left lower lobe."
+    }
+  ],
+  "other_findings": [
+    {
+      "item": "Response Assessment",
+      "description": "Partial response to therapy in primary lung tumor and metastases."
+    },
+    {
+      "item": "New Lesion",
+      "description": "Right lower lobe pneumonia."
+    },
+    {
+      "item": "Acute Condition",
+      "description": "Acute pulmonary embolism."
+    }
+  ],
   "ICDO3_site": "C34.1",
-  "ICDO3_site_term": "Upper lobe of lung",
-  "ICDO3_site_similarity": 0.6005773746079656
+  "ICDO3_site_term": "Upper lobe, lung",
+  "ICDO3_site_similarity": 0.7665658005504401
 }
