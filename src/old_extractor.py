@@ -1,13 +1,13 @@
+# extractor.py
+
 import warnings
 import json
 import pandas as pd
-import numpy as np
 from typing import Optional, List, Dict, Any, Union
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
-from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import torch
 from datetime import datetime
 from dataclasses import dataclass
 import logging
@@ -34,6 +34,7 @@ class ResponseCategory(str, Enum):
     PROGRESSIVE_DISEASE = "Progressive Disease"
     NOT_EVALUABLE = "Not Evaluable"
 
+# First, add PET_CT to ModalityType enum
 class ModalityType(str, Enum):
     """Supported modality types"""
     MAMMOGRAPHY = "Mammography"
@@ -42,7 +43,7 @@ class ModalityType(str, Enum):
     PET_CT = "PET/CT"
     OTHER = "Other"
 
-# Model classes remain the same as they define the data structure
+# Add new model for PET/CT findings
 class SUVMeasurement(BaseModel):
     """Model for SUV measurements"""
     location: str = Field(description="Anatomical location of measurement")
@@ -127,27 +128,17 @@ class RECISTMeasurement(BaseModel):
         self.standardize_measurements()
     
     def standardize_measurements(self):
-        if self.current_value is not None:
+        """Convert measurements to mm and calculate response"""
+        if self.current_value:
             if self.current_unit == 'cm':
                 self.standardized_value_mm = self.current_value * 10
             elif self.current_unit == 'mm':
                 self.standardized_value_mm = self.current_value
-            else:
-                # If unit is unknown, skip calculation or handle gracefully
-                self.standardized_value_mm = None
-
-        if self.prior_value is not None and self.prior_unit is not None:
-            if self.prior_unit == 'cm':
-                prior_mm = self.prior_value * 10
-            elif self.prior_unit == 'mm':
-                prior_mm = self.prior_value
-            else:
-                prior_mm = None
-
-            # Only compute if both standardized_value_mm and prior_mm are available and non-zero
-            if self.standardized_value_mm is not None and prior_mm is not None and prior_mm > 0:
+            
+            if self.prior_value and self.prior_unit:
+                prior_mm = self.prior_value * 10 if self.prior_unit == 'cm' else self.prior_value
                 self.percent_change = ((self.standardized_value_mm - prior_mm) / prior_mm) * 100
-
+                
                 if self.is_target:
                     if self.standardized_value_mm == 0:
                         self.response_category = ResponseCategory.COMPLETE_RESPONSE.value
@@ -157,7 +148,6 @@ class RECISTMeasurement(BaseModel):
                         self.response_category = ResponseCategory.PROGRESSIVE_DISEASE.value
                     else:
                         self.response_category = ResponseCategory.STABLE_DISEASE.value
-
 
 class ClassificationResult(BaseModel):
     """Model for classification results"""
@@ -216,158 +206,79 @@ class RadiologyReport(BaseModel):
         else:
             return ResponseCategory.STABLE_DISEASE.value
 
-class EnhancedSimilarityMapper:
-    """Base class for enhanced similarity mapping using Sentence Transformers"""
-    def __init__(self, model_name: str = 'all-MiniLM-L6-v2'):
-        self.model = SentenceTransformer(model_name)
-        self._embeddings = None
-        self._texts = None
-        
-    def _compute_embeddings(self, texts):
-        """Compute embeddings for a list of texts"""
-        return self.model.encode(texts, convert_to_tensor=True)
-    
-    def _calculate_similarity(self, query_embedding, stored_embeddings):
-        """Calculate cosine similarity between query and stored embeddings"""
-        if torch.is_tensor(query_embedding):
-            query_embedding = query_embedding.cpu().numpy()
-        if torch.is_tensor(stored_embeddings):
-            stored_embeddings = stored_embeddings.cpu().numpy()
-            
-        if len(query_embedding.shape) == 1:
-            query_embedding = query_embedding.reshape(1, -1)
-        if len(stored_embeddings.shape) == 1:
-            stored_embeddings = stored_embeddings.reshape(1, -1)
-            
-        return cosine_similarity(query_embedding, stored_embeddings)[0]
-
-class ModalityMapper(EnhancedSimilarityMapper):
-    """Maps imaging modalities using enhanced similarity search"""
-    def __init__(self, modalities_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
-        super().__init__(model_name)
+class ModalityMapper:
+    """Maps imaging modalities to standardized terminology"""
+    def __init__(self, modalities_df: pd.DataFrame):
         self.modalities_df = modalities_df
-        
-        # Combine Modality and Description into a single text field
-        combined_texts = (modalities_df['Modality'].fillna('') + ' ' + modalities_df['Description'].fillna(''))
-        self._texts = combined_texts.tolist()
-        self._embeddings = self._compute_embeddings(self._texts)
-        
-        # Create processed text for further usage
-        self.modalities_df['processed_text'] = combined_texts.str.lower()
-        
+        self.vectorizer = TfidfVectorizer(ngram_range=(1, 2))
+        self.vectors = self.vectorizer.fit_transform(modalities_df['Modality'].fillna(''))
+
+    # Update modality matching in ModalityMapper
     def find_closest_modality(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
-        """Find closest modality using semantic similarity"""
         if not text:
             return None
-
         try:
-            query_embedding = self._compute_embeddings([text])
-            similarities = self._calculate_similarity(query_embedding, self._embeddings)
-            idx = similarities.argmax()
-
-            if similarities[idx] < threshold:
+            query = self.vectorizer.transform([text])
+            sims = cosine_similarity(query, self.vectors).flatten()
+            idx = sims.argmax()
+            
+            if sims[idx] < threshold:
                 return None
-
+                
             result = {
                 'standard_name': self.modalities_df.iloc[idx]['Modality'],
                 'category': self.modalities_df.iloc[idx]['Category'],
-                'similarity': float(similarities[idx])
+                'similarity': float(sims[idx])
             }
-
-            # Enhanced modality type detection logic
-            text_lower = text.lower()
-            if ('pet' in text_lower and 'ct' in text_lower) or 'pet/ct' in text_lower:
+            
+            # Update modality type detection
+            if 'pet' in text.lower() and 'ct' in text.lower():
                 result['modality_type'] = ModalityType.PET_CT
-            elif any(term in text_lower for term in ['mammogram', 'mammography', 'breast imaging']):
+            elif 'mammogram' in text.lower() or 'mammography' in text.lower():
                 result['modality_type'] = ModalityType.MAMMOGRAPHY
-            elif ('chest' in text_lower and 'ct' in text_lower) or 'thoracic ct' in text_lower:
+            elif 'chest' in text.lower() and 'ct' in text.lower():
                 result['modality_type'] = ModalityType.CHEST_CT
-            elif any(brain_term in text_lower for brain_term in ['brain', 'head', 'cranial']) and \
-                 any(modal_term in text_lower for modal_term in ['ct', 'mri', 'magnetic']):
+            elif any(term in text.lower() for term in ['brain', 'head']) and \
+                any(term in text.lower() for term in ['ct', 'mri', 'magnetic']):
                 result['modality_type'] = ModalityType.BRAIN_IMAGING
             else:
                 result['modality_type'] = ModalityType.OTHER
-
+            
             return result
-
+            
         except Exception as e:
-            logger.error(f"Error in modality matching: {str(e)}")
+            logger.error(f"Error finding modality match: {str(e)}")
             return None
 
-
-class LocationMapper(EnhancedSimilarityMapper):
-    """Maps anatomical locations using enhanced similarity search"""
-    def __init__(self, topography_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
-        super().__init__(model_name)
+class LocationMapper:
+    """Maps anatomical locations to standardized terminology"""
+    def __init__(self, topography_df: pd.DataFrame):
         self.topography_df = topography_df
-        
-        # Preprocess and combine terms for better matching
-        self.topography_df['combined_terms'] = topography_df['term'].fillna('') + ' ' + \
-                                             topography_df['synonyms'].fillna('')
-        self._texts = self.topography_df['combined_terms'].tolist()
-        self._embeddings = self._compute_embeddings(self._texts)
-        
+        self.vectorizer = TfidfVectorizer(ngram_range=(1, 2))
+        self.vectors = self.vectorizer.fit_transform(topography_df['term'].fillna(''))
+
     def find_closest_location(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
-        """Find closest location using semantic similarity"""
         if not text:
             return None
-            
         try:
-            query_embedding = self._compute_embeddings([text])
-            similarities = self._calculate_similarity(query_embedding, self._embeddings)
+            query = self.vectorizer.transform([text])
+            sims = cosine_similarity(query, self.vectors).flatten()
+            idx = sims.argmax()
+            print(f"Debug - Location input: {text}")
+            print(f"Debug - Best match: {self.topography_df.iloc[idx]['term']}")
+            print(f"Debug - Similarity score: {sims[idx]}")
             
-            top_k = 3
-            top_indices = similarities.argsort()[-top_k:][::-1]
-            top_similarities = similarities[top_indices]
-            
-            valid_matches = top_similarities >= threshold
-            if not any(valid_matches):
+            if sims[idx] < threshold:
                 return None
-                
-            best_idx = top_indices[0]
-            best_similarity = top_similarities[0]
             
             return {
-                'code': self.topography_df.iloc[best_idx]['ICDO3'],
-                'term': self.topography_df.iloc[best_idx]['term'],
-                'similarity': float(best_similarity),
-                'alternative_matches': [
-                    {
-                        'term': self.topography_df.iloc[idx]['term'],
-                        'similarity': float(similarities[idx])
-                    }
-                    for idx in top_indices[1:] if similarities[idx] >= threshold
-                ]
+                'code': self.topography_df.iloc[idx]['ICDO3'],
+                'term': self.topography_df.iloc[idx]['term'],
+                'similarity': float(sims[idx])
             }
-            
         except Exception as e:
-            logger.error(f"Error in location matching: {str(e)}")
+            logger.error(f"Error finding location match: {str(e)}")
             return None
-
-    def batch_find_closest_locations(self, texts: list, threshold: float = 0.3) -> list:
-        """Batch process multiple location queries efficiently"""
-        try:
-            query_embeddings = self._compute_embeddings(texts)
-            similarities = self._calculate_similarity(query_embeddings, self._embeddings)
-            
-            results = []
-            for i, sims in enumerate(similarities):
-                idx = sims.argmax()
-                if sims[idx] < threshold:
-                    results.append(None)
-                    continue
-                    
-                results.append({
-                    'code': self.topography_df.iloc[idx]['ICDO3'],
-                    'term': self.topography_df.iloc[idx]['term'],
-                    'similarity': float(sims[idx])
-                })
-                
-            return results
-            
-        except Exception as e:
-            logger.error(f"Error in batch location matching: {str(e)}")
-            return [None] * len(texts)
 
 @dataclass
 class ExtractionDependencies:
@@ -377,7 +288,7 @@ class ExtractionDependencies:
 
 # Initialize standard extraction agent
 standard_extraction_agent = Agent(
-    "openai:gpt-4o-mini",
+    "openai:gpt-4o",
     retries=3,
     deps_type=ExtractionDependencies,
     result_type=RadiologyReport,
@@ -430,7 +341,7 @@ standard_extraction_agent = Agent(
 
 # Initialize modality-specific extraction agent
 modality_specific_agent = Agent(
-    "openai:gpt-4o-mini",
+    "openai:gpt-4o",
     retries=3,
     deps_type=ExtractionDependencies,
     result_type=ModalitySpecific,
@@ -484,65 +395,71 @@ modality_specific_agent = Agent(
     """
 )
 
-# Tool definitions for agents
 @standard_extraction_agent.tool
 async def find_modality(ctx: RunContext[ExtractionDependencies], text: str):
-    """Enhanced modality matching tool"""
+    """Tool for matching imaging modalities"""
     result = ctx.deps.modality_mapper.find_closest_modality(text)
-    logger.info(f"Modality mapping result: {result}")
+    print(f"Modality mapping result: {result}")
     return result
 
 @standard_extraction_agent.tool
 async def find_location(ctx: RunContext[ExtractionDependencies], text: str):
-    """Enhanced location matching tool"""
+    """Tool for matching anatomical locations"""
     result = ctx.deps.location_mapper.find_closest_location(text)
-    logger.info(f"Location mapping result: {result}")
+    print(f"Location mapping result: {result}")
     return result
 
-# Add tools to modality-specific agent
+# Add the same tools to modality-specific agent
 modality_specific_agent.tool(find_modality)
 modality_specific_agent.tool(find_location)
 
-class EnhancedRadiologyExtractor:
-    """Enhanced main class for extracting information from radiology reports"""
+class RadiologyExtractor:
+    """Main class for extracting information from radiology reports"""
     
     def __init__(self, modalities_df: pd.DataFrame, topography_df: pd.DataFrame):
         self.modality_mapper = ModalityMapper(modalities_df)
         self.location_mapper = LocationMapper(topography_df)
 
     async def process_report(self, text: str) -> RadiologyReport:
-        """Process a single radiology report using enhanced two-pass extraction"""
+        """Process a single radiology report using two-pass extraction"""
         try:
-            logger.info("Starting enhanced extraction process...")
+            logger.info("Starting standard extraction...")
             
+            # Create dependencies
             deps = ExtractionDependencies(
                 modality_mapper=self.modality_mapper,
                 location_mapper=self.location_mapper
             )
             
-            # First pass: Standard extraction with enhanced similarity matching
+            # First pass: Standard extraction
             result = await standard_extraction_agent.run(text, deps=deps)
+            
+            # Store original report text
             result.data.report = text
             
-            # Enhanced location matching
+            # Match location code for primary location
             if result.data.primary_location:
+                logger.info(f"Matching location for: {result.data.primary_location}")
                 location_match = await find_location(
                     RunContext(deps=deps, retry=0, tool_name="find_location"),
                     result.data.primary_location
                 )
                 
                 if location_match:
+                    logger.info(f"Found location match: {location_match}")
                     result.data.ICDO3_site = location_match['code']
                     result.data.ICDO3_site_term = location_match['term']
                     result.data.ICDO3_site_similarity = location_match['similarity']
+                else:
+                    logger.warning("No location match found")
             
             # Calculate RECIST response
             result.data.recist_calculated_response = result.data.calculate_recist_response()
             
-            # Second pass: Enhanced modality-specific extraction
+            # Second pass: Modality-specific extraction
             modality_result = await find_modality(
                 RunContext(deps=deps, retry=0, tool_name="find_modality"),
-                text[:200]
+                text[:200]  # Use first part of report for modality detection
             )
             
             if modality_result and 'modality_type' in modality_result:
@@ -550,6 +467,7 @@ class EnhancedRadiologyExtractor:
                 logger.info(f"Detected modality type: {modality_type}")
                 
                 if modality_type != ModalityType.OTHER:
+                    logger.info("Performing modality-specific extraction...")
                     try:
                         modality_specific_result = await modality_specific_agent.run(
                             text,
@@ -567,9 +485,9 @@ class EnhancedRadiologyExtractor:
             raise
 
 async def process_batch(reports_df: pd.DataFrame,
-                       extractor: EnhancedRadiologyExtractor,
+                       extractor: RadiologyExtractor,
                        batch_size: int = 10) -> pd.DataFrame:
-    """Process a batch of reports with enhanced extraction"""
+    """Process a batch of reports"""
     results = []
     total = len(reports_df)
     
@@ -582,6 +500,7 @@ async def process_batch(reports_df: pd.DataFrame,
             
             result = await extractor.process_report(report_row['REPORT'])
             
+            # Combine with metadata
             result_dict = {
                 'MRN': report_row.get('MRN'),
                 'EXAM_DATE': report_row.get('EXAM DATE/TIME'),
@@ -604,8 +523,9 @@ async def process_batch(reports_df: pd.DataFrame,
     
     return pd.DataFrame(results)
 
+# main
 async def main():
-    """Main function with enhanced processing capabilities"""
+    """Main function for demonstration"""
     try:
         # Update the resources path resolution
         resources_path = Path(__file__).parent.parent / 'resources'
@@ -619,102 +539,94 @@ async def main():
             logger.error(f"Please ensure files exist in: {resources_path}")
             return
             
-        # Initialize enhanced extractor
-        extractor = EnhancedRadiologyExtractor(modalities_df, topography_df)
+        # Initialize extractor
+        extractor = RadiologyExtractor(modalities_df, topography_df)
         
-        # Check if processing a batch
+        # Check if we're processing a batch
         input_file = Path('Results.csv')
         if input_file.exists():
             logger.info("Processing batch from Results.csv...")
             reports_df = pd.read_csv(input_file)
             results_df = await process_batch(reports_df, extractor)
-            
-            # Save results with timestamp
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            output_file = f'radiology_results_{timestamp}.csv'
+            output_file = 'radiology_results.csv'
             results_df.to_csv(output_file, index=False)
-            
-            # Generate and save analysis summary
-            summary_data = {
-                'total_reports': len(results_df),
-                'successful_reports': len(results_df[~results_df['error'].notna()]),
-                'failed_reports': len(results_df[results_df['error'].notna()]),
-                'modalities_found': results_df['modality'].value_counts().to_dict(),
-                'average_similarity_scores': {
-                    'location': results_df['ICDO3_site_similarity'].mean(),
-                    'modality': results_df['modality_specific'].apply(
-                        lambda x: x.get('similarity') if isinstance(x, dict) else None
-                    ).mean()
-                }
-            }
-            
-            # Save summary
-            summary_file = f'analysis_summary_{timestamp}.json'
-            with open(summary_file, 'w') as f:
-                json.dump(summary_data, f, indent=2)
-            
             logger.info(f"Batch processing complete. Results saved to {output_file}")
-            logger.info(f"Analysis summary saved to {summary_file}")
             
             # Print summary
+            total_reports = len(results_df)
+            error_reports = results_df['error'].notna().sum() if 'error' in results_df.columns else 0
+            success_reports = total_reports - error_reports
+            
             print("\nProcessing Summary:")
-            print(f"Total Reports: {summary_data['total_reports']}")
-            print(f"Successfully Processed: {summary_data['successful_reports']}")
-            print(f"Errors: {summary_data['failed_reports']}")
-            print("\nModality Distribution:")
-            for modality, count in summary_data['modalities_found'].items():
-                print(f"  {modality}: {count}")
-            print("\nAverage Similarity Scores:")
-            print(f"  Location: {summary_data['average_similarity_scores']['location']:.3f}")
-            print(f"  Modality: {summary_data['average_similarity_scores']['modality']:.3f}")
+            print(f"Total Reports: {total_reports}")
+            print(f"Successfully Processed: {success_reports}")
+            print(f"Errors: {error_reports}")
             
             return
         
-        # Example report processing for testing
+        # Example report for testing
         example_report = """
- Diagnosis: Lymphoma.
-Reason: Follow-up.
-Comparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.
+        (18)F- FDG PET/CT whole body scan:
+Procedure:
+"Images were acquired from vertex to the mid of thighs (standard protocol) caudo
+cranially 91 minutes after IV injection of 204 MBq F18-FDG dose. Axial, sagittal
+, and coronal PET reconstruction were interpreted with and without attenuation c
+orrection. Corresponding CT images without IV contrast were also acquired in a B
+iograph mCT flow 64 slices CT, reconstructed in axial, sagittal and coronal plan
+es, and reviewed alongside the PET images. The CT images were used for attenuati
+on correction and anatomical correlation of the PET images. Fasting blood sugar
+at the injection time was 80 mg/dl Patient weight is 75 kg.
+Comparison: with previous PET/CT scan performed on 22.2.2021.
 Findings:
-Neck CT with IV contrast:
-There are unchanged enlarged hypoattenuating left cervical lymph nodes the large
-st seen at levels III measuring 1 cm in short axis.
-There are unchanged mildly enlarged right supraclavicular lymph nodes, none exce
-eding 1 cm in short axis.
-There is no new cervical lymph node enlargement.
-Chest CT with IV contrast:
-There are unchanged multiple hypoattenuating conglomerate mediastinal lymph node
-s are encasing the aortic arch and its major branches with no significant narrow
-ing, for example the subcarinal lymph node measures 2 cm in short axis with no s
-ignificant change.
-There is no new intrathoracic lymph node enlargement.
-There is no significant axillary lymph node enlargement.
-The mild pericardial thickening/effusion appears less significant.
-There is a new trace amount of right pleural effusion.
-There is no significant left pleural effusion.
-There is no pulmonary nodule/mass.
-There is no pulmonary consolidation.
-Abdomen and pelvis CT scan with contrast:
-Normal liver, spleen, pancreas, adrenals and both kidneys.
-There is no hydronephrosis bilaterally.
-Unremarkable gallbladder.
-There is no intra or extrahepatic biliary tree dilatation.
-There is no significant retroperitoneal or pelvic lymph node enlargement.
-There is no ascites.
-Unremarkable urinary bladder outline.
-There is no vertebral collapse.
+Head and neck:
+- Complete metabolic resolution of the previousely seen hypermetabolic left cerv
+ical lymph node (level III).
+- The included part of the brain demonstrates physiologic FDG metabolic activity
+, with no evidence of active focal lesion.
+- Symmetrical physiologic FDG metabolic activity in the adenoids and the vocalis
+.
+Chest:
+- Significant metabolic and size regression of the previously mentioned heteroge
+neous peripheral hypermetabolic large bulky lobulated anterior mediastinal mass
+with necrotic center, extending to superior mediastinum, currently this mass mea
+suring about 7x3.7cm in its active component and showing heterogenous mild non-s
+pecific FDG uptake SUV max=2.2 compared to previous values14x12 cm with SUV max
+21.87.
+- Complete resolution of the previousely seen ground glass opacification of the
+medial aspect of left upper lung lobe and moderate right pleural effusion.
+- No evidence of hypermetabolic pulmonary nodules.
+Abdomen & pelvis:
+- Physiologic limit of FDG metabolic activity in the liver ( SUV max: 2.3) as we
+ll as the spleen and bowel with no evidence of active focal lesion.
+- Physiologic excreted FDG activity in both pelvicalyceal system and U.B.
+- Stable right sided hemorrhagic renal cortical cyst, showing no FDG uptake, mea
+suring 1.6 cm.
+- No evidence of hypermetabolic abdominal or pelvic LNs.
+Musculoskeletal:
+- Physiologic limit of FDG metabolic activity in the musculoskeletal system with
+no evidence of active focal lesions.
 Impression:
-There has been no significant interval change regarding the hypoattenuating resi
-dual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan
-dated 2 February 2021.
-Dr. Mohammad Mujalli
-Radiologist
+- Excellent response to therapy (Deauville 5Ps=3).
+- Almost complete metabolic resolution and size regression in previously describ
+ed large mediastinal mass, while current residual anterior mediastinal mass is
+showing peripheral heterogenous mild non-specific FDG activity (less than the li
+ver), however; close follow-up is advised to confirm complete response.
+- Complete metabolic resolution of the previousely seen hypermetabolic lymphomat
+ous bilateral cervical lymph nodes.
+- No interval development of any new hypermetabolicconcerning lymphomatous lesio
+ns in this study.
         """
         
-        # Process example report
+        # Build example metadata for the report
+        example_metadata = {
+            'EXAM DATE/TIME': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'PROCEDURE': 'CT CHEST WITH CONTRAST'
+        }
+        
+        # Process single report
         result = await extractor.process_report(example_report)
         
-        # Enhanced output formatting
+        # Print results
         print("\nExtracted Information:")
         print("=" * 50)
         
@@ -730,39 +642,54 @@ Radiologist
         print(f"Reported Response: {result.reported_response}")
         print(f"RECIST Calculated: {result.recist_calculated_response}")
         
-        # Measurements with enhanced formatting
+        # Target Lesions
         if result.target_lesions:
             print("\nTarget Lesions:")
-            for i, lesion in enumerate(result.target_lesions, 1):
-                print(f"\n{i}. Location: {lesion.location}")
-                print(f"   Current: {lesion.current_value} {lesion.current_unit}")
+            for lesion in result.target_lesions:
+                print(f"\n- Location: {lesion.location}")
+                print(f"  Current: {lesion.current_value} {lesion.current_unit}")
                 if lesion.prior_value:
-                    print(f"   Prior: {lesion.prior_value} {lesion.prior_unit}")
-                    print(f"   Change: {lesion.percent_change:.1f}%")
-                print(f"   Response: {lesion.response_category}")
+                    print(f"  Prior: {lesion.prior_value} {lesion.prior_unit}")
+                    print(f"  Change: {lesion.percent_change:.1f}%")
+                print(f"  Response: {lesion.response_category}")
         
-        # Enhanced visualization of findings
+        # Non-target Lesions
+        if result.non_target_lesions:
+            print("\nNon-target Lesions:")
+            for lesion in result.non_target_lesions:
+                print(f"\n- Location: {lesion.location}")
+                print(f"  Current: {lesion.current_value} {lesion.current_unit}")
+        
+        # Classifications
         if result.classifications:
-            print("\nClassified Findings:")
+            print("\nClassifications:")
             for classification in result.classifications:
                 print(f"\n{classification.class_name}:")
                 print(f"  {classification.description}")
         
-        # Save detailed output
+        # Modality-specific findings
+        if result.modality_specific:
+            print("\nModality-Specific Findings:")
+            print(json.dumps(
+                result.modality_specific.dict(exclude_none=True),
+                indent=2
+            ))
+        
+        # Save complete output with metadata
         output_file = Path('example_output.json')
         output_data = {
-            'analysis_timestamp': datetime.now().isoformat(),
-            'report_data': result.dict(exclude_none=True)
+            'EXAM_DATE': example_metadata['EXAM DATE/TIME'],
+            'PROCEDURE': example_metadata['PROCEDURE'],
+            **result.dict(exclude_none=True)
         }
-        
         with open(output_file, 'w') as f:
             json.dump(output_data, f, indent=2)
-        
-        print(f"\nDetailed results saved to {output_file}")
+        print(f"\nComplete results saved to {output_file}")
         
     except Exception as e:
         logger.error(f"Error in main execution: {str(e)}", exc_info=True)
         raise
+
 
 if __name__ == "__main__":
     import asyncio
