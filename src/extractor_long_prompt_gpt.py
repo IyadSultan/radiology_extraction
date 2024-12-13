@@ -1,5 +1,4 @@
 import os
-import google.generativeai as genai
 from dotenv import load_dotenv
 import json
 import re
@@ -9,6 +8,7 @@ import torch
 import pandas as pd
 from pathlib import Path
 from typing import Optional, Dict, Any
+from openai import OpenAI
 
 load_dotenv()
 
@@ -47,7 +47,7 @@ class LocationMapper(EnhancedSimilarityMapper):
         
         # Preprocess and combine terms for better matching
         self.topography_df['combined_terms'] = topography_df['term'].fillna('') + ' ' + \
-                                             topography_df['synonyms'].fillna('')
+                                               topography_df['synonyms'].fillna('')
         self._texts = self.topography_df['combined_terms'].tolist()
         self._embeddings = self._compute_embeddings(self._texts)
         
@@ -88,22 +88,8 @@ class LocationMapper(EnhancedSimilarityMapper):
             print(f"Error in location matching: {str(e)}")
             return None
 
-# Configure Gemini
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-
-# Create the model
-generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 40,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
-}
-
-model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash-exp",
-    generation_config=generation_config,
-)
+# Initialize the client
+client = OpenAI()
 
 # Load ICDO3 data
 resources_path = Path(__file__).parent.parent / 'resources'
@@ -115,14 +101,7 @@ except FileNotFoundError as e:
     print(f"Please ensure ICDO3Topography.csv exists in: {resources_path}")
     location_mapper = None
 
-# Add after loading the ICDO3 data
-if location_mapper:
-    print(f"Successfully loaded ICDO3 data with {len(location_mapper.topography_df)} entries")
-    print("Sample entries:")
-    print(location_mapper.topography_df.head())
-else:
-    print("Warning: Location mapper not initialized")
-
+# Prompt that you want to send to the GPT-4 model
 prompt = """
 You are an expert radiologist specializing in structured data extraction from radiology reports. You must parse the following text as a radiology report and produce a single JSON object matching this schema:
 
@@ -239,26 +218,12 @@ You are an expert radiologist specializing in structured data extraction from ra
 
 Instructions:
 1. **Read the provided radiology report** (which follows this instruction block).
-2. **Extract** all data that fits into the above JSON structure:
-   - **Study information:** modality, primary location, study/comparison dates, clinical history, indication, normal_study (if stated).
-   - **Lesions (RECIST):** target and non-target lesions, new lesions. Each lesion should include size measurements, prior sizes, % change, response category, and whether it is a target lesion or not.
-   - **Response assessment:** any explicitly stated assessment (reported_response), plus do not forget to assign the `recist_calculated_response` if possible (based on the logic in the code, e.g., presence of new lesions => "Progressive Disease", etc.).
-   - **Classification results:** e.g. Normal, Infection, Metastasis, Primary tumor, Effusion, Trauma, Hemorrhage, Thrombosis, Lymphadenopathy, Others. Provide a description for each classification. If the confidence is not stated, either omit or set to null.
-   - **Other findings:** anything not covered by the above categories but still reported. 
-   - If the text implies a specific modality (like "Mammogram," "PET/CT," "Brain MRI," etc.), create the corresponding nested object (`mammography`, `pet_ct`, `chest_ct`, or `brain_tumor`) within `"modality_specific"`. 
-   - Omit any sub-structures that do not apply. (For instance, if the modality is CT chest for fungal infections, fill `"chest_ct"`; if the modality is PET/CT, fill `"pet_ct"`, etc.)
-3. **Output** must be strictly in valid JSON format, with no extra keys or commentary. No markdown. No additional explanation.
-4. Do **not** leave any required JSON fields blank or missing—if something isn't mentioned, use `null`, an empty string, or an empty list (depending on the field type) rather than omitting the key.
-
-Now, here is the radiology report text that you need to parse and convert into JSON. Your final output must be **only** one JSON object with the structure described above.
-
-[BEGIN REPORT TEXT]
-{{YOUR_Radiology_Report_HERE}}
-[END REPORT TEXT]
-
+2. **Extract** all data that fits into the above JSON structure...
+3. **Output** must be strictly in valid JSON format...
+4. Do **not** leave any required JSON fields blank or missing...
 """
 
-case= """
+case = """
 Diagnosis: Lymphoma.
 Reason: Follow-up.
 Comparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.
@@ -300,27 +265,83 @@ Radiologist
 
 prompt = prompt.replace("{{YOUR_Radiology_Report_HERE}}", case)
 
-chat_session = model.start_chat(
-  history=[
-    {
-      "role": "user",
-      "parts": [prompt]
-               
-    },
-    
-  ]
-)
+# Modify the prompt to be more direct and structured
+system_message = """You are an expert radiologist specializing in structured data extraction from radiology reports. 
+Your task is to parse radiology reports and output JSON data following a specific schema."""
 
-response = chat_session.send_message(prompt)
-
-# Add debugging print statements
-print("Raw response:")
-print(response.text)
-
-# Save the response to a JSON file
+# Split the prompt into system and user messages
 try:
-    # Clean the response text by removing markdown code block markers
-    cleaned_response = response.text
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": system_message
+            },
+            {
+                "role": "user",
+                "content": f"""Please parse this radiology report and output ONLY a JSON object following this schema:
+
+{prompt}
+
+Here is the report to analyze:
+
+{case}"""
+            }
+        ],
+        temperature=0.7,  # Reduced temperature for more focused output
+        top_p=0.95,
+        max_tokens=8192
+    )
+    
+    print("Raw response:")
+    response_text = response.choices[0].message.content
+    print(response_text)
+
+    # Add validation check for the response
+    if response_text.lower().startswith('sorry') or 'can\'t assist' in response_text.lower():
+        print("Error: GPT-4 declined to process the request. Retrying with modified prompt...")
+        
+        # Retry with a simplified prompt
+        retry_response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a medical data extraction expert. Extract structured data from radiology reports in JSON format."
+                },
+                {
+                    "role": "user",
+                    "content": f"""Extract the following information from this radiology report as JSON:
+- report (full text)
+- modality
+- primary_location
+- study_date
+- comparison_date
+- clinical_history
+- indication
+- target_lesions (array of measurements)
+- non_target_lesions (array of measurements)
+- new_lesions (array)
+- reported_response
+- classifications (array)
+- other_findings (array)
+
+Report:
+{case}"""
+                }
+            ],
+            temperature=0.7,
+            top_p=0.95,
+            max_tokens=8192
+        )
+        
+        print("\nRetry response:")
+        response_text = retry_response.choices[0].message.content
+        print(response_text)
+
+    # Clean the response text by removing markdown code block markers (if present)
+    cleaned_response = response_text
     if cleaned_response.startswith('```json'):
         cleaned_response = cleaned_response.replace('```json', '', 1)
     if cleaned_response.endswith('```'):
@@ -331,6 +352,8 @@ try:
     match = re.search(r'{.*}', cleaned_response, re.DOTALL)
     if match:
         cleaned_response = match.group(0)
+    else:
+        raise ValueError("No JSON object found in the response")
     
     # Parse the cleaned response text as JSON
     json_data = json.loads(cleaned_response)
@@ -338,7 +361,7 @@ try:
     # Print the entire JSON data for debugging
     print("\nExtracted JSON data:")
     print(json.dumps(json_data, indent=2))
-    
+
     # Enhanced location mapping with better error handling and logging
     if location_mapper:
         print("\nLocation Mapping Process:")
@@ -351,7 +374,6 @@ try:
         # Try to extract locations from the report text
         if 'report' in json_data:
             print("\nSearching for locations in report text...")
-            # Look for common location indicators
             location_indicators = [
                 'neck', 'chest', 'abdomen', 'pelvis', 'brain', 'liver', 
                 'lung', 'lymph node', 'cervical', 'mediastinal'
@@ -362,7 +384,7 @@ try:
                     found_locations.append(indicator)
             if found_locations:
                 print(f"Found potential locations in text: {', '.join(found_locations)}")
-        
+
         if primary_location:
             print(f"\nAttempting to map location: {primary_location}")
             location_match = location_mapper.find_closest_location(primary_location)
@@ -403,9 +425,9 @@ try:
                             break
 
     # Save to a file with proper formatting
-    with open('extractor_gemini_output.json', 'w', encoding='utf-8') as f:
+    with open('extractor_gpt4_output.json', 'w', encoding='utf-8') as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)
-    print("\nSuccessfully saved response to extractor_gemini_output.json")
+    print("\nSuccessfully saved response to extractor_gpt4_output.json")
     
     # Print a summary of the extracted information
     print("\nExtraction Summary:")
@@ -420,8 +442,12 @@ try:
 except json.JSONDecodeError as e:
     print(f"Error: Could not parse response as JSON: {e}")
     print("Response content:")
-    print(response.text)
-except IOError as e:
-    print(f"Error: Could not save file: {e}")
+    print(response_text)
+except ValueError as e:
+    print(f"Error: {str(e)}")
+    print("Response content:")
+    print(response_text)
 except Exception as e:
-    print(f"Unexpected error: {e}")
+    print(f"Unexpected error: {str(e)}")
+    print("Response content:")
+    print(response_text)

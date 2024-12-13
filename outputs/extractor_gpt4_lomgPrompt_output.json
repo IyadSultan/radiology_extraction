@@ -1,91 +1,80 @@
 {
   "report": "Diagnosis: Lymphoma.\nReason: Follow-up.\nComparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.\nFindings:\nNeck CT with IV contrast:\nThere are unchanged enlarged hypoattenuating left cervical lymph nodes the large\nst seen at levels III measuring 1 cm in short axis.\nThere are unchanged mildly enlarged right supraclavicular lymph nodes, none exce\neding 1 cm in short axis.\nThere is no new cervical lymph node enlargement.\nChest CT with IV contrast:\nThere are unchanged multiple hypoattenuating conglomerate mediastinal lymph node\ns are encasing the aortic arch and its major branches with no significant narrow\ning, for example the subcarinal lymph node measures 2 cm in short axis with no s\nignificant change.\nThere is no new intrathoracic lymph node enlargement.\nThere is no significant axillary lymph node enlargement.\nThe mild pericardial thickening/effusion appears less significant.\nThere is a new trace amount of right pleural effusion.\nThere is no significant left pleural effusion.\nThere is no pulmonary nodule/mass.\nThere is no pulmonary consolidation.\nAbdomen and pelvis CT scan with contrast:\nNormal liver, spleen, pancreas, adrenals and both kidneys.\nThere is no hydronephrosis bilaterally.\nUnremarkable gallbladder.\nThere is no intra or extrahepatic biliary tree dilatation.\nThere is no significant retroperitoneal or pelvic lymph node enlargement.\nThere is no ascites.\nUnremarkable urinary bladder outline.\nThere is no vertebral collapse.\nImpression:\nThere has been no significant interval change regarding the hypoattenuating resi\ndual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan\ndated 2 February 2021.\nDr. Mohammad Mujalli\nRadiologist",
   "modality": "CT",
-  "primary_location": null,
-  "study_date": null,
-  "comparison_date": "2 February 2021",
-  "clinical_history": null,
+  "primary_location": "Lymph nodes",
+  "study_date": "",
+  "comparison_date": "2021-02-02",
+  "clinical_history": "Lymphoma",
   "indication": "Follow-up",
-  "normal_study": null,
-  "target_lesions": [
+  "normal_study": false,
+  "target_lesions": [],
+  "non_target_lesions": [
     {
-      "location": "left cervical lymph nodes level III",
-      "current_value": 1,
-      "current_unit": "cm",
+      "location": "Left cervical lymph nodes",
+      "current_value": 10,
+      "current_unit": "mm",
       "standardized_value_mm": 10,
-      "prior_value": null,
-      "prior_unit": null,
-      "percent_change": null,
-      "response_category": "stable",
+      "prior_value": 10,
+      "prior_unit": "mm",
+      "percent_change": 0,
+      "response_category": "Unchanged",
       "is_target": false
     },
     {
-      "location": "subcarinal lymph node",
-      "current_value": 2,
-      "current_unit": "cm",
-      "standardized_value_mm": 20,
-      "prior_value": null,
-      "prior_unit": null,
-      "percent_change": null,
-      "response_category": "stable",
-      "is_target": false
-    }
-  ],
-  "non_target_lesions": [
-    {
-      "location": "right supraclavicular lymph nodes",
-      "current_value": 1,
-      "current_unit": "cm",
+      "location": "Right supraclavicular lymph nodes",
+      "current_value": 10,
+      "current_unit": "mm",
       "standardized_value_mm": 10,
-      "prior_value": null,
-      "prior_unit": null,
-      "percent_change": null,
-      "response_category": "stable",
+      "prior_value": 10,
+      "prior_unit": "mm",
+      "percent_change": 0,
+      "response_category": "Unchanged",
+      "is_target": false
+    },
+    {
+      "location": "Subcarinal lymph node",
+      "current_value": 20,
+      "current_unit": "mm",
+      "standardized_value_mm": 20,
+      "prior_value": 20,
+      "prior_unit": "mm",
+      "percent_change": 0,
+      "response_category": "Unchanged",
       "is_target": false
     }
   ],
   "new_lesions": [
     {
-      "location": "right pleural space",
-      "description": "trace amount of right pleural effusion"
+      "location": "Right pleural",
+      "description": "New trace amount of right pleural effusion"
     }
   ],
-  "reported_response": "no significant interval change",
+  "reported_response": "No significant interval change",
   "recist_calculated_response": "Stable Disease",
   "classifications": [
     {
       "class_name": "Lymphoma",
-      "description": null,
-      "confidence": null
-    },
-    {
-      "class_name": "Lymphadenopathy",
-      "description": "enlarged hypoattenuating left cervical lymph nodes, mildly enlarged right supraclavicular lymph nodes, multiple hypoattenuating conglomerate mediastinal lymph nodes",
-      "confidence": null
-    },
-    {
-      "class_name": "Effusion",
-      "description": "mild pericardial thickening/effusion, trace amount of right pleural effusion",
+      "description": "Unchanged hypoattenuating lymph nodes",
       "confidence": null
     }
   ],
   "other_findings": [
     {
-      "item": "pericardial thickening/effusion",
-      "description": "mild pericardial thickening/effusion appears less significant"
+      "item": "Pericardial thickening/effusion",
+      "description": "Appears less significant"
     }
   ],
-  "ICDO3_site": null,
-  "ICDO3_site_term": null,
-  "ICDO3_site_similarity": null,
+  "ICDO3_site": "C77.8",
+  "ICDO3_site_term": "Lymph nodes of multiple regions",
+  "ICDO3_site_similarity": 0.6990606784820557,
   "modality_specific": {
-    "modality_type": "Other",
+    "modality_type": "Chest CT",
     "mammography": {
-      "birads_category": null,
-      "breast_density": null,
+      "birads_category": "",
+      "breast_density": "",
       "masses": [],
       "calcifications": [],
-      "architectural_distortion": null,
+      "architectural_distortion": false,
       "asymmetries": []
     },
     "chest_ct": {
@@ -97,23 +86,30 @@
       "other_fungal_findings": []
     },
     "brain_tumor": {
-      "tumor_details": null,
-      "edema": null,
-      "mass_effect": null,
-      "enhancement_pattern": null,
-      "brain_region": null,
+      "tumor_details": {
+        "size": "",
+        "description": ""
+      },
+      "edema": {
+        "description": ""
+      },
+      "mass_effect": {
+        "description": ""
+      },
+      "enhancement_pattern": "",
+      "brain_region": "",
       "additional_features": []
     },
     "pet_ct": {
-      "radiopharmaceutical": null,
-      "injection_time": null,
+      "radiopharmaceutical": "",
+      "injection_time": "",
       "blood_glucose": null,
-      "uptake_time": null,
+      "uptake_time": "",
       "suv_measurements": [],
       "total_lesion_glycolysis": null,
       "background_suv": null,
-      "metabolic_response": null,
-      "uptake_pattern": null,
+      "metabolic_response": "",
+      "uptake_pattern": "",
       "additional_findings": []
     }
   }

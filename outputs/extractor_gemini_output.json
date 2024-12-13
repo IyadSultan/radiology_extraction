@@ -1,0 +1,142 @@
+{
+  "report": "Diagnosis: Lymphoma.\nReason: Follow-up.\nComparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.\nFindings:\nNeck CT with IV contrast:\nThere are unchanged enlarged hypoattenuating left cervical lymph nodes the large\nst seen at levels III measuring 1 cm in short axis.\nThere are unchanged mildly enlarged right supraclavicular lymph nodes, none exce\neding 1 cm in short axis.\nThere is no new cervical lymph node enlargement.\nChest CT with IV contrast:\nThere are unchanged multiple hypoattenuating conglomerate mediastinal lymph node\ns are encasing the aortic arch and its major branches with no significant narrow\ning, for example the subcarinal lymph node measures 2 cm in short axis with no s\nignificant change.\nThere is no new intrathoracic lymph node enlargement.\nThere is no significant axillary lymph node enlargement.\nThe mild pericardial thickening/effusion appears less significant.\nThere is a new trace amount of right pleural effusion.\nThere is no significant left pleural effusion.\nThere is no pulmonary nodule/mass.\nThere is no pulmonary consolidation.\nAbdomen and pelvis CT scan with contrast:\nNormal liver, spleen, pancreas, adrenals and both kidneys.\nThere is no hydronephrosis bilaterally.\nUnremarkable gallbladder.\nThere is no intra or extrahepatic biliary tree dilatation.\nThere is no significant retroperitoneal or pelvic lymph node enlargement.\nThere is no ascites.\nUnremarkable urinary bladder outline.\nThere is no vertebral collapse.\nImpression:\nThere has been no significant interval change regarding the hypoattenuating resi\ndual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan\ndated 2 February 2021.\nDr. Mohammad Mujalli\nRadiologist",
+  "modality": "CT",
+  "primary_location": null,
+  "study_date": null,
+  "comparison_date": "2 February 2021",
+  "clinical_history": null,
+  "indication": "Follow-up",
+  "normal_study": null,
+  "target_lesions": [],
+  "non_target_lesions": [
+    {
+      "location": "left cervical lymph nodes at levels III",
+      "current_value": 1.0,
+      "current_unit": "cm",
+      "standardized_value_mm": 10.0,
+      "prior_value": null,
+      "prior_unit": null,
+      "percent_change": null,
+      "response_category": null,
+      "is_target": false
+    },
+    {
+      "location": "right supraclavicular lymph nodes",
+      "current_value": 1.0,
+      "current_unit": "cm",
+      "standardized_value_mm": 10.0,
+      "prior_value": null,
+      "prior_unit": null,
+      "percent_change": null,
+      "response_category": null,
+      "is_target": false
+    },
+    {
+      "location": "mediastinal lymph nodes",
+      "current_value": null,
+      "current_unit": null,
+      "standardized_value_mm": null,
+      "prior_value": null,
+      "prior_unit": null,
+      "percent_change": null,
+      "response_category": null,
+      "is_target": false
+    },
+    {
+      "location": "subcarinal lymph node",
+      "current_value": 2.0,
+      "current_unit": "cm",
+      "standardized_value_mm": 20.0,
+      "prior_value": null,
+      "prior_unit": null,
+      "percent_change": null,
+      "response_category": null,
+      "is_target": false
+    }
+  ],
+  "new_lesions": [
+    {
+      "location": "right pleural space",
+      "description": "trace amount of right pleural effusion"
+    }
+  ],
+  "reported_response": "no significant interval change regarding the hypoattenuating residual lymph nodes seen above the diaphragm",
+  "recist_calculated_response": "Stable Disease",
+  "classifications": [
+    {
+      "class_name": "Lymphoma",
+      "description": null,
+      "confidence": null
+    },
+    {
+      "class_name": "Lymphadenopathy",
+      "description": "enlarged left cervical, right supraclavicular, and mediastinal lymph nodes",
+      "confidence": null
+    },
+    {
+      "class_name": "Effusion",
+      "description": "new trace amount of right pleural effusion",
+      "confidence": null
+    }
+  ],
+  "other_findings": [
+    {
+      "item": "pericardial thickening/effusion",
+      "description": "mild pericardial thickening/effusion appears less significant"
+    },
+    {
+      "item": "liver, spleen, pancreas, adrenals, kidneys",
+      "description": "Normal"
+    },
+    {
+      "item": "gallbladder",
+      "description": "Unremarkable"
+    },
+    {
+      "item": "biliary tree",
+      "description": "no intra or extrahepatic biliary tree dilatation."
+    },
+    {
+      "item": "hydronephrosis",
+      "description": "no hydronephrosis bilaterally"
+    },
+    {
+      "item": "retroperitoneal or pelvic lymph nodes",
+      "description": "no significant retroperitoneal or pelvic lymph node enlargement"
+    },
+    {
+      "item": "ascites",
+      "description": "no ascites"
+    },
+    {
+      "item": "urinary bladder",
+      "description": "Unremarkable urinary bladder outline"
+    },
+    {
+      "item": "vertebral collapse",
+      "description": "no vertebral collapse"
+    },
+    {
+      "item": "pulmonary nodules/mass",
+      "description": "no pulmonary nodule/mass"
+    },
+    {
+      "item": "pulmonary consolidation",
+      "description": "no pulmonary consolidation"
+    }
+  ],
+  "ICDO3_site": "C76.0",
+  "ICDO3_site_term": "Head, face or neck NOS",
+  "ICDO3_site_similarity": 0.5379419922828674,
+  "modality_specific": {
+    "modality_type": "Chest CT",
+    "chest_ct": {
+      "halo_sign": [],
+      "cavitations": [],
+      "fungal_nodules": [],
+      "ground_glass_opacities": [],
+      "air_crescent_signs": [],
+      "other_fungal_findings": []
+    }
+  }
+}
