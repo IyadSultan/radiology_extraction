@@ -1,7 +1,4 @@
-# LangChain imports
-from langchain.chains import create_extraction_chain_pydantic
-from langchain_openai import ChatOpenAI
-
+import re
 import warnings
 import json
 import pandas as pd
@@ -52,39 +49,50 @@ class ModalityType(str, Enum):
     PET_CT = "PET/CT"
     OTHER = "Other"
 
+class Classification(BaseModel):
+    """Model for classification results"""
+    class_name: str = Field(description="Classification category", alias="category")
+    description: str = Field(description="Description of the finding")
+    confidence: Optional[float] = Field(default=None)
+
+    class Config:
+        populate_by_name = True
+        allow_population_by_field_name = True
+
+class OtherFinding(BaseModel):
+    """Model for other findings"""
+    item: str = Field(description="Type of finding")
+    description: str = Field(description="Description of the finding")
 
 class SUVMeasurement(BaseModel):
-    """Model for SUV measurements"""
     location: str = Field(description="Anatomical location of measurement")
     suv_max: float = Field(description="Maximum SUV value")
-    suv_mean: Optional[float] = Field(description="Mean SUV value")
-    suv_peak: Optional[float] = Field(description="Peak SUV value")
-    prior_suv_max: Optional[float] = Field(description="Previous maximum SUV value")
-    percent_change: Optional[float] = Field(default=None)
-    metabolic_volume: Optional[float] = Field(description="Metabolic tumor volume (MTV)")
-    measurement_time: Optional[str] = Field(description="Time post-injection")
+    suv_mean: Optional[float] = None
+    suv_peak: Optional[float] = None
+    prior_suv_max: Optional[float] = None
+    percent_change: Optional[float] = None
+    metabolic_volume: Optional[float] = None
+    measurement_time: Optional[str] = None
 
     def calculate_change(self):
         if self.prior_suv_max and self.prior_suv_max > 0:
             self.percent_change = ((self.suv_max - self.prior_suv_max) / self.prior_suv_max) * 100
 
 class PETCTFindings(BaseModel):
-    """PET/CT specific findings"""
-    radiopharmaceutical: str = Field(description="Type of tracer used (e.g., FDG)")
-    injection_time: Optional[str] = Field(description="Time of tracer injection")
-    blood_glucose: Optional[float] = Field(description="Blood glucose level at time of scan")
-    uptake_time: Optional[str] = Field(description="Uptake time post-injection")
+    radiopharmaceutical: str
+    injection_time: Optional[str] = None
+    blood_glucose: Optional[float] = None
+    uptake_time: Optional[str] = None
     suv_measurements: List[SUVMeasurement] = Field(default_factory=list)
-    total_lesion_glycolysis: Optional[float] = Field(description="Total lesion glycolysis (TLG)")
-    background_suv: Optional[float] = Field(description="Background SUV measurement")
-    metabolic_response: Optional[str] = Field(description="Overall metabolic response assessment")
-    uptake_pattern: Optional[str] = Field(description="Pattern of tracer uptake")
+    total_lesion_glycolysis: Optional[float] = None
+    background_suv: Optional[float] = None
+    metabolic_response: Optional[str] = None
+    uptake_pattern: Optional[str] = None
     additional_findings: List[Dict[str, str]] = Field(default_factory=list)
 
 class MammographyFindings(BaseModel):
-    """Mammography-specific findings"""
-    birads_category: str = Field(description="BI-RADS assessment category")
-    breast_density: str = Field(description="Breast density category")
+    birads_category: str
+    breast_density: str
     masses: List[Dict[str, str]] = Field(default_factory=list)
     calcifications: List[Dict[str, str]] = Field(default_factory=list)
     architectural_distortion: Optional[bool] = None
@@ -99,12 +107,11 @@ class ChestCTFungalFindings(BaseModel):
     other_fungal_findings: List[Dict[str, str]] = Field(default_factory=list)
 
 class BrainTumorFindings(BaseModel):
-    """Brain imaging findings focused on tumors"""
-    tumor_details: Dict[str, Any] = Field(...)
+    tumor_details: Dict[str, Any]
     edema: Optional[Dict[str, str]] = None
     mass_effect: Optional[Dict[str, str]] = None
     enhancement_pattern: Optional[str] = None
-    brain_region: str = Field(description="Specific brain region affected")
+    brain_region: str
     additional_features: List[Dict[str, str]] = Field(default_factory=list)
 
 class ModalitySpecific(BaseModel):
@@ -156,26 +163,12 @@ class Lesion(BaseModel):
                     else:
                         self.response_category = "Stable Disease"
 
-class Classification(BaseModel):
-    """Model for classification results"""
-    class_name: str = Field(description="Classification category", alias="category")
-    description: str = Field(description="Description of the finding")
-    confidence: Optional[float] = Field(default=None)
-
-    class Config:
-        populate_by_name = True
-        allow_population_by_field_name = True
-
-class OtherFinding(BaseModel):
-    """Model for other findings"""
-    item: str = Field(description="Type of finding")
-    description: str = Field(description="Description of the finding")
-
 class RadiologyReport(BaseModel):
     """Main model for radiology report extraction"""
     report: str = Field(description="Full report text")
     modality: str = Field(description="Imaging modality")
     primary_location: str = Field(description="Primary anatomical location")
+    language_model: str = Field(description="Name of language model used for extraction")
     study_date: Optional[str] = Field(None, description="Date of current study")
     comparison_date: Optional[str] = Field(None, description="Date of comparison study")
     clinical_history: Optional[str] = Field(None, description="Clinical history")
@@ -242,50 +235,106 @@ class RadiologyReport(BaseModel):
         """Pydantic model configuration"""
         arbitrary_types_allowed = True
 
+import re
+from sentence_transformers import SentenceTransformer
+
+# Other imports and definitions...
+
+class ResponseExtractor:
+    def __init__(self):
+        # Predefined templates for response categories
+        self.templates = {
+            "Stable Disease": [
+                "no significant interval change",
+                "findings are stable",
+                "unchanged compared to prior study"
+            ],
+            "Progressive Disease": [
+                "evidence of progression",
+                "increased size or number of lesions",
+                "new lesions identified"
+            ],
+            "Partial Response": [
+                "partial decrease in size",
+                "reduction in lesion size",
+                "significant interval decrease"
+            ],
+            "Complete Response": [
+                "complete resolution of lesions",
+                "no evidence of residual disease"
+            ]
+        }
+        # Initialize the semantic similarity model
+        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+
+        # Precompute embeddings for templates
+        self.template_embeddings = {
+            category: self.model.encode(phrases, convert_to_tensor=True)
+            for category, phrases in self.templates.items()
+        }
+
+    def extract_response(self, impression_text: str) -> Optional[str]:
+        # Preprocess the impression section
+        impression_text = impression_text.strip().lower()
+
+        # Check for explicit matches using regex patterns
+        for category, phrases in self.templates.items():
+            for phrase in phrases:
+                if re.search(re.escape(phrase), impression_text):
+                    return category
+
+        # Use semantic similarity as a fallback
+        impression_embedding = self.model.encode([impression_text], convert_to_tensor=True)
+        max_similarity = 0
+        best_match = None
+
+        for category, embeddings in self.template_embeddings.items():
+            similarities = torch.nn.functional.cosine_similarity(impression_embedding, embeddings)
+            max_sim = similarities.max().item()
+            if max_sim > max_similarity:
+                max_similarity = max_sim
+                best_match = category
+
+        # Apply a similarity threshold (e.g., 0.7) to ensure confidence
+        return best_match if max_similarity > 0.7 else None
+
+
+
+
 class EnhancedSimilarityMapper:
-    """Base class for enhanced similarity mapping using Sentence Transformers"""
     def __init__(self, model_name: str = 'all-MiniLM-L6-v2'):
         self.model = SentenceTransformer(model_name)
         self._embeddings = None
         self._texts = None
         
     def _compute_embeddings(self, texts):
-        """Compute embeddings for a list of texts"""
         return self.model.encode(texts, convert_to_tensor=True)
     
     def _calculate_similarity(self, query_embedding, stored_embeddings):
-        """Calculate cosine similarity between query and stored embeddings"""
         if torch.is_tensor(query_embedding):
             query_embedding = query_embedding.cpu().numpy()
         if torch.is_tensor(stored_embeddings):
             stored_embeddings = stored_embeddings.cpu().numpy()
-            
+
         if len(query_embedding.shape) == 1:
             query_embedding = query_embedding.reshape(1, -1)
         if len(stored_embeddings.shape) == 1:
             stored_embeddings = stored_embeddings.reshape(1, -1)
             
         return cosine_similarity(query_embedding, stored_embeddings)[0]
-        
+
 class ModalityMapper(EnhancedSimilarityMapper):
-    """Maps imaging modalities using enhanced similarity search"""
     def __init__(self, modalities_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
         super().__init__(model_name)
         self.modalities_df = modalities_df
-        
-        # Combine Modality and Description into a single text field
         combined_texts = (modalities_df['Modality'].fillna('') + ' ' + modalities_df['Description'].fillna(''))
         self._texts = combined_texts.tolist()
         self._embeddings = self._compute_embeddings(self._texts)
-        
-        # Create processed text for further usage
         self.modalities_df['processed_text'] = combined_texts.str.lower()
-        
+
     def find_closest_modality(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
-        """Find closest modality using semantic similarity"""
         if not text:
             return None
-
         try:
             query_embedding = self._compute_embeddings([text])
             similarities = self._calculate_similarity(query_embedding, self._embeddings)
@@ -300,7 +349,6 @@ class ModalityMapper(EnhancedSimilarityMapper):
                 'similarity': float(similarities[idx])
             }
 
-            # Enhanced modality type detection logic
             text_lower = text.lower()
             if ('pet' in text_lower and 'ct' in text_lower) or 'pet/ct' in text_lower:
                 result['modality_type'] = ModalityType.PET_CT
@@ -319,28 +367,22 @@ class ModalityMapper(EnhancedSimilarityMapper):
         except Exception as e:
             logger.error(f"Error in modality matching: {str(e)}")
             return None
-        
+
 class LocationMapper(EnhancedSimilarityMapper):
-    """Maps anatomical locations using enhanced similarity search"""
     def __init__(self, topography_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
         super().__init__(model_name)
         self.topography_df = topography_df
-        
-        # Preprocess and combine terms for better matching
         self.topography_df['combined_terms'] = topography_df['term'].fillna('') + ' ' + \
-                                             topography_df['synonyms'].fillna('')
+                                               topography_df['synonyms'].fillna('')
         self._texts = self.topography_df['combined_terms'].tolist()
         self._embeddings = self._compute_embeddings(self._texts)
         
     def find_closest_location(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
-        """Find closest location using semantic similarity"""
         if not text:
             return None
-            
         try:
             query_embedding = self._compute_embeddings([text])
             similarities = self._calculate_similarity(query_embedding, self._embeddings)
-            
             top_k = 3
             top_indices = similarities.argsort()[-top_k:][::-1]
             top_similarities = similarities[top_indices]
@@ -368,31 +410,6 @@ class LocationMapper(EnhancedSimilarityMapper):
         except Exception as e:
             logger.error(f"Error in location matching: {str(e)}")
             return None
-
-    def batch_find_closest_locations(self, texts: list, threshold: float = 0.3) -> list:
-        """Batch process multiple location queries efficiently"""
-        try:
-            query_embeddings = self._compute_embeddings(texts)
-            similarities = self._calculate_similarity(query_embeddings, self._embeddings)
-            
-            results = []
-            for i, sims in enumerate(similarities):
-                idx = sims.argmax()
-                if sims[idx] < threshold:
-                    results.append(None)
-                    continue
-                    
-                results.append({
-                    'code': self.topography_df.iloc[idx]['ICDO3'],
-                    'term': self.topography_df.iloc[idx]['term'],
-                    'similarity': float(sims[idx])
-                })
-                
-            return results
-            
-        except Exception as e:
-            logger.error(f"Error in batch location matching: {str(e)}")
-            return [None] * len(texts)
 
 @dataclass
 class ExtractionDependencies:
@@ -467,7 +484,7 @@ class ExtractionDependencies:
 # - Others"""
 
 standard_system_prompt = """
-   You are an expert radiologist specializing in structured data extraction from radiology reports.
+You are an expert radiologist specializing in structured data extraction from radiology reports.
     
     Extract all information in a single pass and return a complete RadiologyReport object:
     
@@ -487,6 +504,29 @@ standard_system_prompt = """
     3. Response Assessment:
        - reported_response: Extract the response assessment as stated
        - recist_calculated_response will be calculated automatically
+       = RECIST Calculation Instructions:
+            A. RECIST responses should be calculated as follows:
+            - **Complete Response (CR):** Complete disappearance of all target lesions.
+            - **Partial Response (PR):** A decrease of 30% or more in the sum of the diameters of target lesions compared to the baseline or prior measurements.
+            - **Stable Disease (SD):** A change in the sum of diameters of target lesions between a 30% decrease and a 20% increase.
+            - **Progressive Disease (PD):** An increase of 20% or more in the sum of diameters of target lesions, or the appearance of new lesions.
+
+            B. Ensure the percentage change is calculated as:
+            \[
+            \text{Percent Change} = \frac{\text{Current Sum of Target Lesions} - \text{Prior Sum of Target Lesions}}{\text{Prior Sum of Target Lesions}} \times 100
+            \]
+
+            C. If there are new lesions, the RECIST response should always be **Progressive Disease** (PD), irrespective of size changes in target lesions.
+
+            D. If no measurable disease is present, classify as **Not Evaluable** (NE).
+
+            Return the `recist_calculated_response` as one of:
+            - "Complete Response"
+            - "Partial Response"
+            - "Stable Disease"
+            - "Progressive Disease"
+            - "Not Evaluable"
+
        
     4. Classifications:
        Classify findings into these categories:
@@ -503,15 +543,15 @@ standard_system_prompt = """
        
     5. Structure output:
        classifications: [
-           {{"class_name": "<category>", "description": "<detailed finding>"}}
+           {"class_name": "<category>", "description": "<detailed finding>"}
        ]
        other_findings: [
-           {{"item": "<finding type>", "description": "<detailed description>"}}
+           {"item": "<finding type>", "description": "<detailed description>"}
        ]
        
     Only include explicitly stated information.
     Provide detailed, specific descriptions for each finding.
-"""
+    """
 
 # Modality-specific prompt
 modality_system_prompt = """
@@ -564,219 +604,254 @@ You are an expert radiologist focusing on modality-specific findings extraction.
 """
 
 class EnhancedRadiologyExtractor:
-    def __init__(self, modalities_df: pd.DataFrame, topography_df: pd.DataFrame, model_name: str = "gpt-4o-mini"):
+    def __init__(self, modalities_df: pd.DataFrame, topography_df: pd.DataFrame):
+        # Initialize modality and location mappers
         self.modality_mapper = ModalityMapper(modalities_df)
         self.location_mapper = LocationMapper(topography_df)
-        self.model_name = model_name
-        
+
         # Initialize LLM
-        self.llm = ChatOpenAI(model_name=model_name, temperature=0.5)
-        
-        # Create standard extraction chain
-        self.standard_prompt = ChatPromptTemplate.from_messages([
-            ("system", standard_system_prompt),
+        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
+        self.model_name = "gpt-4o"
+
+        # Create parser
+        self.parser = PydanticOutputParser(pydantic_object=RadiologyReport)
+
+        # Create prompt template with format instructions
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", """You are an expert radiologist. Extract structured information from this radiology report.
+            Follow these guidelines strictly:
+
+            1. For measurements:
+               - Extract numeric values and units separately
+               - Convert all measurements to standardized mm values
+               - Include location for each measurement
+               - Mark target vs non-target lesions
+               - Calculate percent change if prior measurements exist
+               - Set response category based on RECIST criteria
+
+            2. For target lesions:
+               - Location must be specific (e.g., "Mediastinal lymph nodes (subcarinal)")
+               - Current value must be in numeric form
+               - Units must be either 'mm' or 'cm'
+               - Include standardized value in mm
+               - Calculate percent change if prior measurements exist
+               - Set is_target to true
+
+            3. For non-target lesions:
+               - Follow same format as target lesions
+               - Set is_target to false
+
+            4. Response categories must be one of:
+               - "Complete Response"
+               - "Partial Response"
+               - "Stable Disease"
+               - "Progressive Disease"
+
+            {format_instructions}
+            """),
             ("human", "{text}")
         ])
-        self.standard_chain = (
-            self.standard_prompt 
-            | self.llm.with_structured_output(RadiologyReport)
-        )
-        
-        # Create modality-specific chain
-        self.modality_prompt = ChatPromptTemplate.from_messages([
-            ("system", modality_specific_prompt),
-            ("human", "Modality Type: {modality_type}\n\nReport Text: {text}")
-        ])
-        self.modality_chain = (
-            self.modality_prompt 
-            | self.llm.with_structured_output(ModalitySpecific)
-        )
+
+        # Create chain
+        self.chain = self.prompt | self.llm | self.parser
+
+        # Add classification keywords
+        self.classification_keywords = {
+            "Normal": [
+                "normal",
+                "unremarkable",
+                "no significant abnormality",
+                "within normal limits"
+            ],
+            "Infection": [
+                "infection",
+                "abscess",
+                "empyema",
+                "pneumonia",
+                "septic emboli",
+                "fungal infection",
+                "bacterial infection",
+                "viral infection",
+                "tuberculosis"
+            ],
+            "Metastasis": [
+                "metastasis",
+                "metastatic disease",
+                "secondary lesion",
+                "spread to",
+                "distant metastasis",
+                "metastatic involvement"
+            ],
+            "Primary Tumor": [
+                "primary tumor",
+                "neoplasm",
+                "carcinoma",
+                "adenocarcinoma",
+                "squamous cell carcinoma",
+                "tumor origin"
+            ],
+            "Edema": [
+                "edema",
+                "swelling",
+                "peritumoral edema",
+                "cerebral edema",
+                "soft tissue edema"
+            ],
+            "Atelectasis": [
+                "atelectasis",
+                "collapsed lung",
+                "lobar collapse",
+                "segmental collapse",
+                "partial collapse"
+            ],
+            "Calcification": [
+                "calcifications",
+                "arterial calcifications",
+                "soft tissue calcifications",
+                "calcified mass",
+                "calcified plaque"
+            ],
+            "Obstruction/Stenosis": [
+                "obstruction",
+                "stenosis",
+                "narrowing",
+                "stricture",
+                "blockage",
+                "compressive effect",
+                "encasement"
+            ],
+            "Ascites": [
+                "ascites",
+                "peritoneal fluid",
+                "fluid in abdomen",
+                "abdominal distention",
+                "peritoneal effusion"
+            ],
+            "Other": [
+                "abnormality",
+                "changes consistent with",
+                "evidence of",
+                "findings suggestive of"
+            ]
+        }
+
+        # Initialize the ResponseExtractor
+        self.response_extractor = ResponseExtractor()
+
+    def classify_findings(self, report_text: str) -> List[Classification]:
+        """
+        Dynamically classify findings in the radiology report.
+        """
+        classifications = []
+        lower_text = report_text.lower()
+
+        for class_name, keywords in self.classification_keywords.items():
+            for keyword in keywords:
+                if keyword in lower_text:
+                    # Extract a relevant description from the report
+                    match_index = lower_text.find(keyword)
+                    snippet = report_text[max(0, match_index - 50): match_index + 50]
+                    classifications.append(
+                        Classification(
+                            class_name=class_name,
+                            description=f"Detected finding related to {class_name}: '{snippet.strip()}'."
+                        )
+                    )
+                    break  # Avoid duplicate classifications for the same category
+
+        return classifications
 
     def process_report(self, text: str) -> RadiologyReport:
-        """Process a single radiology report using enhanced two-pass extraction"""
-        logger.info(f"Starting extraction process with LangChain using {self.model_name}...")
+        """Process a single radiology report"""
+        logger.info("Starting extraction process with LangChain...")
         
         try:
-            # First pass: Standard extraction
-            extracted = self.standard_chain.invoke({
-                "text": text
+            # Extract information using the chain
+            extracted = self.chain.invoke({
+                "text": text,
+                "format_instructions": self.parser.get_format_instructions()
             })
-            
-            # Add the original report text
+
+            if not extracted:
+                raise ValueError("No data extracted from report")
+
+            # Ensure report text and language model are set
             extracted.report = text
-            
-            # Location matching
+            extracted.language_model = self.model_name
+
+            # Enhanced location matching
             if extracted.primary_location:
-                loc_match = self.location_mapper.find_closest_location(extracted.primary_location)
-                if loc_match:
-                    extracted.ICDO3_site = loc_match['code']
-                    extracted.ICDO3_site_term = loc_match['term']
-                    extracted.ICDO3_site_similarity = loc_match['similarity']
-            
+                location_match = self.location_mapper.find_closest_location(
+                    extracted.primary_location,
+                    threshold=0.7
+                )
+                
+                if location_match:
+                    extracted.ICDO3_site = location_match['code']
+                    extracted.ICDO3_site_term = location_match['term']
+                    extracted.ICDO3_site_similarity = location_match['similarity']
+                    logger.info(f"Location match found: {location_match['term']} "
+                              f"(similarity: {location_match['similarity']:.3f})")
+                else:
+                    extracted.ICDO3_site = None
+                    extracted.ICDO3_site_term = "Unknown"
+                    extracted.ICDO3_site_similarity = None
+                    logger.warning("No matching location found above threshold")
+
             # Calculate RECIST response
             extracted.recist_calculated_response = extracted.calculate_recist_response()
             
-            # Second pass: Modality-specific extraction
-            try:
-                # Detect modality type from first 200 characters
-                modality_result = self.modality_mapper.find_closest_modality(text[:200])
-                
-                if modality_result and 'modality_type' in modality_result:
-                    modality_type = modality_result['modality_type']
-                    logger.info(f"Detected modality type: {modality_type}")
-                    
-                    if modality_type != ModalityType.OTHER:
-                        modality_specific_result = self.modality_chain.invoke({
-                            "text": text,
-                            "modality_type": modality_type.value  # Use the string value of the enum
-                        })
-                        extracted.modality_specific = modality_specific_result
-                
-            except Exception as e:
-                logger.error(f"Error in modality-specific extraction: {str(e)}")
-                # Continue with standard extraction result even if modality-specific fails
-            
+            # Add dynamic classification
+            extracted.classifications = self.classify_findings(text)
+
             return extracted
-            
+
         except Exception as e:
-            logger.error(f"Error processing report: {e}")
+            logger.error(f"Error processing report: {str(e)}")
             raise
 
-# Add the modality-specific system prompt
-modality_specific_prompt = """
-You are an expert radiologist focusing on modality-specific findings extraction.
-Based on the identified modality type, extract relevant specialized information in the following format:
 
-For Mammography:
-{
-    "modality_type": "MAMMOGRAPHY",
-    "birads_category": "string",
-    "breast_density": "string",
-    "masses": [
-        {
-            "location": "string",
-            "size": "string",
-            "characteristics": "string"
-        }
-    ],
-    "calcifications": [
-        {
-            "location": "string",
-            "type": "string",
-            "distribution": "string"
-        }
-    ],
-    "architectural_distortion": "string",
-    "asymmetries": "string"
-}
 
-For Chest CT (Fungal Infections):
-{
-    "modality_type": "CHEST_CT",
-    "halo_sign": {
-        "present": false,
-        "details": "string"
-    },
-    "cavitations": [
-        {
-            "location": "string",
-            "size": "string",
-            "characteristics": "string"
-        }
-    ],
-    "nodules": [
-        {
-            "location": "string",
-            "size": "string",
-            "characteristics": "string"
-        }
-    ],
-    "ground_glass_opacities": [
-        {
-            "location": "string",
-            "extent": "string",
-            "pattern": "string"
-        }
-    ],
-    "air_crescent_signs": [
-        {
-            "location": "string",
-            "details": "string"
-        }
-    ]
-}
 
-For Brain Imaging:
-{
-    "modality_type": "BRAIN_IMAGING",
-    "tumor": {
-        "location": "string",
-        "size": "string",
-        "characteristics": "string"
-    },
-    "edema": {
-        "present": false,
-        "extent": "string",
-        "location": "string"
-    },
-    "mass_effect": {
-        "present": false,
-        "details": "string"
-    },
-    "enhancement_pattern": "string",
-    "additional_features": [
-        {
-            "feature": "string",
-            "description": "string"
-        }
-    ]
-}
-
-For PET/CT:
-{
-    "modality_type": "PET_CT",
-    "radiopharmaceutical": {
-        "type": "string",
-        "dose": "string",
-        "injection_time": "string",
-        "uptake_time": "string"
-    },
-    "blood_glucose": "string",
-    "lesions": [
-        {
-            "location": "string",
-            "suv_max": 0.0,
-            "suv_mean": 0.0,
-            "suv_peak": 0.0,
-            "prior_suv_max": 0.0,
-            "metabolic_volume": "string"
-        }
-    ],
-    "background_suv": 0.0,
-    "total_lesion_glycolysis": "string",
-    "metabolic_response": "string",
-    "additional_findings": [
-        {
-            "location": "string",
-            "description": "string"
-        }
-    ]
-}
-
-Important:
-1. Return VALID JSON only
-2. Include all numeric measurements as numbers
-3. Use null for missing optional values
-4. Include all arrays even if empty
-5. Only extract information explicitly stated in the report
-6. Ensure output matches the exact structure for the specified modality type
-
-The modality type will be provided in the input. Extract only the relevant information for that modality type.
+example_report_text = """
+ Diagnosis: Lymphoma.
+Reason: Follow-up.
+Comparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.
+Findings:
+Neck CT with IV contrast:
+There are unchanged enlarged hypoattenuating left cervical lymph nodes the large
+st seen at levels III measuring 1 cm in short axis.
+There are unchanged mildly enlarged right supraclavicular lymph nodes, none exce
+eding 1 cm in short axis.
+There is no new cervical lymph node enlargement.
+Chest CT with IV contrast:
+There are unchanged multiple hypoattenuating conglomerate mediastinal lymph node
+s are encasing the aortic arch and its major branches with no significant narrow
+ing, for example the subcarinal lymph node measures 2 cm in short axis with no s
+ignificant change.
+There is no new intrathoracic lymph node enlargement.
+There is no significant axillary lymph node enlargement.
+The mild pericardial thickening/effusion appears less significant.
+There is a new trace amount of right pleural effusion.
+There is no significant left pleural effusion.
+There is no pulmonary nodule/mass.
+There is no pulmonary consolidation.
+Abdomen and pelvis CT scan with contrast:
+Normal liver, spleen, pancreas, adrenals and both kidneys.
+There is no hydronephrosis bilaterally.
+Unremarkable gallbladder.
+There is no intra or extrahepatic biliary tree dilatation.
+There is no significant retroperitoneal or pelvic lymph node enlargement.
+There is no ascites.
+Unremarkable urinary bladder outline.
+There is no vertebral collapse.
+Impression:
+There has been no significant interval change regarding the hypoattenuating resi
+dual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan
+dated 2 February 2021.
+Dr. Mohammad Mujalli
+Radiologist
 """
-
-# Read example report from file
-with open('C:\\Users\\USER\\Documents\\radiologyExtraction\\examples\\example1.txt', 'r') as f:
-    example_report_text = f.read()
 # # Usage example:
 # resources_path = Path(__file__).parent.parent / 'resources'
 # modalities_df = pd.read_csv(resources_path / 'modalities.csv')
@@ -792,8 +867,7 @@ if __name__ == "__main__":
         modalities_df = pd.read_csv(resources_path / 'modalities.csv')
         topography_df = pd.read_csv(resources_path / 'ICDO3Topography.csv')
         
-        model_name = "gpt-4o-mini"  # Specify the model name
-        extractor = EnhancedRadiologyExtractor(modalities_df, topography_df, model_name)
+        extractor = EnhancedRadiologyExtractor(modalities_df, topography_df)
         result = extractor.process_report(example_report_text)
         
         # Enhanced output formatting
@@ -806,6 +880,7 @@ if __name__ == "__main__":
         print(f"Primary Location: {result.primary_location}")
         if result.ICDO3_site:
             print(f"ICD-O Site: {result.ICDO3_site} ({result.ICDO3_site_term})")
+            print(f"Location Match Similarity: {result.ICDO3_site_similarity:.3f}")
         
         # Response Assessment
         print("\nResponse Assessment:")
@@ -830,11 +905,10 @@ if __name__ == "__main__":
                 print(f"\n{classification.class_name}:")
                 print(f"  {classification.description}")
         
-        # Save detailed output with model name in filename
-        output_file = Path(f'example_output_langchain_{model_name.replace("-", "_")}.json')
+        # Save detailed output
+        output_file = Path(f'example_output_langchain_{extractor.model_name}.json')
         output_data = {
             'analysis_timestamp': datetime.now().isoformat(),
-            'model_name': model_name,  # Include model name in output
             'report_data': result.dict(exclude_none=True)
         }
         

@@ -1,0 +1,135 @@
+{
+  "analysis_timestamp": "2024-12-13T20:53:04.858388",
+  "model_name": "gpt-4o",
+  "report_data": {
+    "report": "tient ID: 123456\nStudy Date: 2024-12-12\nReferring Physician: Dr. John Smith\nRadiologist: Dr. Jane Doe\nReason for Exam: Evaluation of metastatic disease\nClinical History: 65-year-old male with a history of non-small cell lung cancer (NSCLC) undergoing follow-up for suspected metastatic disease.\n\nModality: PET/CT with FDG (18F-fluorodeoxyglucose)\nRadiopharmaceutical: FDG (370 MBq)\nInjection Time: 10:00 AM\nUptake Time: 60 minutes\nBlood Glucose Level: 98 mg/dL\n\nFindings:\nNeck:\n\nThere is an FDG-avid right cervical lymph node at level II measuring 1.5 cm in short axis with an SUV max of 12.3, suspicious for metastatic involvement.\nMildly FDG-avid left supraclavicular lymph node measuring 1.2 cm in short axis with an SUV max of 4.8.\nChest:\n\nA hypermetabolic right upper lobe pulmonary nodule measuring 3.2 x 2.8 cm with an SUV max of 18.7, consistent with the known primary tumor.\nMultiple FDG-avid mediastinal lymph nodes are present:\nSubcarinal lymph node: 2.1 cm in short axis, SUV max of 14.2.\nRight paratracheal lymph node: 1.8 cm in short axis, SUV max of 10.4.\nMild FDG uptake in the anterior mediastinum without a discrete mass.\nAbdomen:\n\nEnlarged FDG-avid retroperitoneal lymph node (1.7 x 1.6 cm, SUV max 6.5).\nLiver demonstrates multiple FDG-avid lesions:\nLargest lesion in segment VIII measuring 3.6 x 3.4 cm, SUV max of 15.2.\nSmaller lesion in segment V measuring 2.1 x 2.0 cm, SUV max of 11.7.\nPelvis:\n\nFDG-avid pelvic lymph node measuring 1.3 cm in short axis with an SUV max of 6.0.\nNo significant FDG uptake in the urinary bladder or surrounding structures.\nBones:\n\nFDG-avid lesion in the left iliac bone measuring 2.0 cm with an SUV max of 9.5, suspicious for osseous metastasis.\nNo other FDG-avid skeletal lesions identified.\nOther Findings:\n\nMildly increased FDG uptake in the right pleura, likely reactive.\nBackground physiological FDG uptake in the brain, myocardium, and bowel.\nImpression:\nRight upper lobe pulmonary nodule with high FDG uptake, consistent with the known primary malignancy.\nHypermetabolic mediastinal and cervical lymph nodes, concerning for metastatic disease.\nFDG-avid hepatic lesions, consistent with metastatic disease.\nFDG-avid retroperitoneal and pelvic lymph nodes, suspicious for metastatic involvement.\nOsseous metastasis in the left iliac bone.\nNo FDG-avid lesions in the brain or other skeletal structures.\nRecommendation:\nCorrelate findings with clinical history and prior imaging.\nConsider biopsy of the liver lesion or osseous lesion for confirmation if clinically indicated.\nContinue systemic therapy evaluation.\nDr. Jane Doe\nRadiologist",
+    "modality": "PET/CT",
+    "primary_location": "Lung, NOS",
+    "study_date": "2024-12-12",
+    "clinical_history": "65-year-old male with a history of non-small cell lung cancer (NSCLC) undergoing follow-up for suspected metastatic disease.",
+    "indication": "Evaluation of metastatic disease",
+    "normal_study": false,
+    "target_lesions": [
+      {
+        "location": "Right upper lobe pulmonary nodule",
+        "current_value": 32.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 32.0,
+        "response_category": "Consistent with primary tumor",
+        "is_target": true
+      }
+    ],
+    "non_target_lesions": [
+      {
+        "location": "Right cervical lymph node",
+        "current_value": 15.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 15.0,
+        "response_category": "Suspicious for metastatic involvement",
+        "is_target": false
+      },
+      {
+        "location": "Left supraclavicular lymph node",
+        "current_value": 12.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 12.0,
+        "response_category": "Mildly FDG-avid",
+        "is_target": false
+      },
+      {
+        "location": "Subcarinal lymph node",
+        "current_value": 21.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 21.0,
+        "response_category": "Suspicious for metastatic involvement",
+        "is_target": false
+      },
+      {
+        "location": "Right paratracheal lymph node",
+        "current_value": 18.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 18.0,
+        "response_category": "Suspicious for metastatic involvement",
+        "is_target": false
+      },
+      {
+        "location": "Retroperitoneal lymph node",
+        "current_value": 17.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 17.0,
+        "response_category": "Suspicious for metastatic involvement",
+        "is_target": false
+      },
+      {
+        "location": "Pelvic lymph node",
+        "current_value": 13.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 13.0,
+        "response_category": "Suspicious for metastatic involvement",
+        "is_target": false
+      },
+      {
+        "location": "Liver segment VIII lesion",
+        "current_value": 36.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 36.0,
+        "response_category": "Consistent with metastatic disease",
+        "is_target": false
+      },
+      {
+        "location": "Liver segment V lesion",
+        "current_value": 21.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 21.0,
+        "response_category": "Consistent with metastatic disease",
+        "is_target": false
+      },
+      {
+        "location": "Left iliac bone lesion",
+        "current_value": 20.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 20.0,
+        "response_category": "Suspicious for osseous metastasis",
+        "is_target": false
+      }
+    ],
+    "new_lesions": [],
+    "classifications": [
+      {
+        "class_name": "Metastasis",
+        "description": "Hypermetabolic mediastinal and cervical lymph nodes, concerning for metastatic disease."
+      },
+      {
+        "class_name": "Metastasis",
+        "description": "FDG-avid hepatic lesions, consistent with metastatic disease."
+      },
+      {
+        "class_name": "Metastasis",
+        "description": "FDG-avid retroperitoneal and pelvic lymph nodes, suspicious for metastatic involvement."
+      },
+      {
+        "class_name": "Metastasis",
+        "description": "Osseous metastasis in the left iliac bone."
+      },
+      {
+        "class_name": "Primary tumor",
+        "description": "Right upper lobe pulmonary nodule with high FDG uptake, consistent with the known primary malignancy."
+      },
+      {
+        "class_name": "Others",
+        "description": "Mildly increased FDG uptake in the right pleura, likely reactive."
+      }
+    ],
+    "other_findings": [
+      {
+        "item": "Physiological FDG uptake",
+        "description": "Background physiological FDG uptake in the brain, myocardium, and bowel."
+      }
+    ],
+    "reported_response": "Findings concerning for metastatic disease progression.",
+    "recist_calculated_response": "Not Evaluable",
+    "ICDO3_site": "C34.9",
+    "ICDO3_site_term": "Lung NOS",
+    "ICDO3_site_similarity": 0.7539217472076416
+  }
+}

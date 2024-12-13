@@ -179,6 +179,7 @@ class RadiologyReport(BaseModel):
     comparison_date: Optional[str] = Field(default=None)
     clinical_history: Optional[str] = Field(default=None)
     indication: Optional[str] = Field(default=None)
+    normal_study: Optional[bool] = Field(default=None, description="True if the study is normal, False if not")
     
     target_lesions: List[RECISTMeasurement] = Field(default_factory=list)
     non_target_lesions: List[RECISTMeasurement] = Field(default_factory=list)
@@ -392,6 +393,7 @@ standard_extraction_agent = Agent(
        - dates (study and comparison)
        - clinical_history
        - indication
+       
        
     2. Measurements and RECIST:
        - For each lesion: current size, prior size if available
@@ -669,7 +671,10 @@ async def main():
             print(f"  Modality: {summary_data['average_similarity_scores']['modality']:.3f}")
             
             return
-        
+            # Process single example report
+        # resources_path = Path(__file__).parent.parent / 'examples'
+        # with open(resources_path / 'example1.txt', 'r') as f:
+        #     example_report = f.read()
         # Example report processing for testing
         example_report = """
  Diagnosis: Lymphoma.

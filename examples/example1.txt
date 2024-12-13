@@ -1,0 +1,56 @@
+tient ID: 123456
+Study Date: 2024-12-12
+Referring Physician: Dr. John Smith
+Radiologist: Dr. Jane Doe
+Reason for Exam: Evaluation of metastatic disease
+Clinical History: 65-year-old male with a history of non-small cell lung cancer (NSCLC) undergoing follow-up for suspected metastatic disease.
+
+Modality: PET/CT with FDG (18F-fluorodeoxyglucose)
+Radiopharmaceutical: FDG (370 MBq)
+Injection Time: 10:00 AM
+Uptake Time: 60 minutes
+Blood Glucose Level: 98 mg/dL
+
+Findings:
+Neck:
+
+There is an FDG-avid right cervical lymph node at level II measuring 1.5 cm in short axis with an SUV max of 12.3, suspicious for metastatic involvement.
+Mildly FDG-avid left supraclavicular lymph node measuring 1.2 cm in short axis with an SUV max of 4.8.
+Chest:
+
+A hypermetabolic right upper lobe pulmonary nodule measuring 3.2 x 2.8 cm with an SUV max of 18.7, consistent with the known primary tumor.
+Multiple FDG-avid mediastinal lymph nodes are present:
+Subcarinal lymph node: 2.1 cm in short axis, SUV max of 14.2.
+Right paratracheal lymph node: 1.8 cm in short axis, SUV max of 10.4.
+Mild FDG uptake in the anterior mediastinum without a discrete mass.
+Abdomen:
+
+Enlarged FDG-avid retroperitoneal lymph node (1.7 x 1.6 cm, SUV max 6.5).
+Liver demonstrates multiple FDG-avid lesions:
+Largest lesion in segment VIII measuring 3.6 x 3.4 cm, SUV max of 15.2.
+Smaller lesion in segment V measuring 2.1 x 2.0 cm, SUV max of 11.7.
+Pelvis:
+
+FDG-avid pelvic lymph node measuring 1.3 cm in short axis with an SUV max of 6.0.
+No significant FDG uptake in the urinary bladder or surrounding structures.
+Bones:
+
+FDG-avid lesion in the left iliac bone measuring 2.0 cm with an SUV max of 9.5, suspicious for osseous metastasis.
+No other FDG-avid skeletal lesions identified.
+Other Findings:
+
+Mildly increased FDG uptake in the right pleura, likely reactive.
+Background physiological FDG uptake in the brain, myocardium, and bowel.
+Impression:
+Right upper lobe pulmonary nodule with high FDG uptake, consistent with the known primary malignancy.
+Hypermetabolic mediastinal and cervical lymph nodes, concerning for metastatic disease.
+FDG-avid hepatic lesions, consistent with metastatic disease.
+FDG-avid retroperitoneal and pelvic lymph nodes, suspicious for metastatic involvement.
+Osseous metastasis in the left iliac bone.
+No FDG-avid lesions in the brain or other skeletal structures.
+Recommendation:
+Correlate findings with clinical history and prior imaging.
+Consider biopsy of the liver lesion or osseous lesion for confirmation if clinically indicated.
+Continue systemic therapy evaluation.
+Dr. Jane Doe
+Radiologist

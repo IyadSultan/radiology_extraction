@@ -1,0 +1,20 @@
+{
+  "analysis_timestamp": "2024-12-13T21:16:49.584439",
+  "model_name": "claude-3-opus-20240229",
+  "report_data": {
+    "report": "tient ID: 123456\nStudy Date: 2024-12-12\nReferring Physician: Dr. John Smith\nRadiologist: Dr. Jane Doe\nReason for Exam: Evaluation of metastatic disease\nClinical History: 65-year-old male with a history of non-small cell lung cancer (NSCLC) undergoing follow-up for suspected metastatic disease.\n\nModality: PET/CT with FDG (18F-fluorodeoxyglucose)\nRadiopharmaceutical: FDG (370 MBq)\nInjection Time: 10:00 AM\nUptake Time: 60 minutes\nBlood Glucose Level: 98 mg/dL\n\nFindings:\nNeck:\n\nThere is an FDG-avid right cervical lymph node at level II measuring 1.5 cm in short axis with an SUV max of 12.3, suspicious for metastatic involvement.\nMildly FDG-avid left supraclavicular lymph node measuring 1.2 cm in short axis with an SUV max of 4.8.\nChest:\n\nA hypermetabolic right upper lobe pulmonary nodule measuring 3.2 x 2.8 cm with an SUV max of 18.7, consistent with the known primary tumor.\nMultiple FDG-avid mediastinal lymph nodes are present:\nSubcarinal lymph node: 2.1 cm in short axis, SUV max of 14.2.\nRight paratracheal lymph node: 1.8 cm in short axis, SUV max of 10.4.\nMild FDG uptake in the anterior mediastinum without a discrete mass.\nAbdomen:\n\nEnlarged FDG-avid retroperitoneal lymph node (1.7 x 1.6 cm, SUV max 6.5).\nLiver demonstrates multiple FDG-avid lesions:\nLargest lesion in segment VIII measuring 3.6 x 3.4 cm, SUV max of 15.2.\nSmaller lesion in segment V measuring 2.1 x 2.0 cm, SUV max of 11.7.\nPelvis:\n\nFDG-avid pelvic lymph node measuring 1.3 cm in short axis with an SUV max of 6.0.\nNo significant FDG uptake in the urinary bladder or surrounding structures.\nBones:\n\nFDG-avid lesion in the left iliac bone measuring 2.0 cm with an SUV max of 9.5, suspicious for osseous metastasis.\nNo other FDG-avid skeletal lesions identified.\nOther Findings:\n\nMildly increased FDG uptake in the right pleura, likely reactive.\nBackground physiological FDG uptake in the brain, myocardium, and bowel.\nImpression:\nRight upper lobe pulmonary nodule with high FDG uptake, consistent with the known primary malignancy.\nHypermetabolic mediastinal and cervical lymph nodes, concerning for metastatic disease.\nFDG-avid hepatic lesions, consistent with metastatic disease.\nFDG-avid retroperitoneal and pelvic lymph nodes, suspicious for metastatic involvement.\nOsseous metastasis in the left iliac bone.\nNo FDG-avid lesions in the brain or other skeletal structures.\nRecommendation:\nCorrelate findings with clinical history and prior imaging.\nConsider biopsy of the liver lesion or osseous lesion for confirmation if clinically indicated.\nContinue systemic therapy evaluation.\nDr. Jane Doe\nRadiologist",
+    "modality": "PET/CT",
+    "primary_location": "Lung",
+    "study_date": "2024-12-12",
+    "comparison_date": "",
+    "target_lesions": [],
+    "non_target_lesions": [],
+    "new_lesions": [],
+    "classifications": [],
+    "other_findings": [],
+    "recist_calculated_response": "Not Evaluable",
+    "ICDO3_site": "C34.9",
+    "ICDO3_site_term": "Lung NOS",
+    "ICDO3_site_similarity": 0.6417784690856934
+  }
+}

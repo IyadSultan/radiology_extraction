@@ -23,3 +23,7 @@ sympy==1.13.1
 tokenizers==0.21.0
 torch==2.5.1
 transformers==4.47.0
+langchain
+langchain-community
+langchain-openai
+sentence-transformers

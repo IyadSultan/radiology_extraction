@@ -1,158 +1,178 @@
-from pydantic import BaseModel, Field
-from pydantic_ai import Agent, RunContext
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import logging
-import asyncio
-import nest_asyncio
-from dataclasses import dataclass
-from typing import List
-from pathlib import Path
-import json
-from datetime import datetime
-import pandas as pd
+import os
+import google.generativeai as genai
 from dotenv import load_dotenv
-import torch
+import json
+import re
 
 load_dotenv()
-nest_asyncio.apply()
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-class MeasurementInfo(BaseModel):
-    """Simple measurement model"""
-    location: str = Field(description="Anatomical location")
-    size: str = Field(description="Size with unit")
-    is_target: bool = Field(default=False, description="Target lesion status")
+# Create the model
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain",
+}
 
-class Finding(BaseModel):
-    """Simple finding model"""
-    category: str = Field(description="Finding category")
-    details: str = Field(description="Finding details")
-
-class SimpleReport(BaseModel):
-    """Minimal report model for Gemini compatibility"""
-    text: str = Field(default="")
-    modality: str = Field(default="")
-    area: str = Field(default="")
-    study_date: str = Field(default="")
-    comparison: str = Field(default="")
-    history: str = Field(default="")
-    findings: List[Finding] = Field(default_factory=list)
-    measurements: List[MeasurementInfo] = Field(default_factory=list)
-    impression: str = Field(default="")
-
-class SimilarityMapper:
-    """Basic similarity mapping"""
-    def __init__(self, reference_df: pd.DataFrame):
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
-        self.df = reference_df
-        self.terms = self.df['term'].fillna('').tolist()
-        self._embeddings = self.model.encode(self.terms, convert_to_tensor=True)
-    
-    def find_match(self, text: str) -> dict:
-        """Find closest matching term"""
-        if not text:
-            return {"term": "", "code": "", "score": 0.0}
-        
-        try:
-            query_embedding = self.model.encode([text], convert_to_tensor=True)
-            similarities = cosine_similarity(
-                query_embedding.cpu().numpy(),
-                self._embeddings.cpu().numpy()
-            )[0]
-            
-            best_idx = similarities.argmax()
-            return {
-                "term": str(self.df.iloc[best_idx]['term']),
-                "code": str(self.df.iloc[best_idx].get('ICDO3', '')),
-                "score": float(similarities[best_idx])
-            }
-        except Exception as e:
-            logger.error(f"Matching error: {str(e)}")
-            return {"term": "", "code": "", "score": 0.0}
-
-@dataclass
-class ExtractorDeps:
-    """Simple dependencies"""
-    mapper: SimilarityMapper
-
-extraction_agent = Agent(
-    "gemini-2.0-flash-exp",
-    retries=3,
-    deps_type=ExtractorDeps,
-    result_type=SimpleReport,
-    system_prompt="""
-    Extract information from the radiology report into these categories:
-
-    1. Basic Information:
-       - modality: Type of imaging (CT, MRI, etc.)
-       - area: Anatomical region(s)
-       - study_date: Current study date
-       - comparison: Prior study details
-       - history: Clinical history/indication
-    
-    2. Measurements:
-       For each lesion:
-       - location: Specific anatomical site
-       - size: Measurement with unit (e.g., "1 cm", "20 mm")
-       - is_target: true for significant measurable lesions
-    
-    3. Findings:
-       For each significant finding:
-       - category: Type (e.g., Lymphadenopathy, Effusion, Normal)
-       - details: Complete description as stated
-    
-    4. Impression:
-       Overall assessment and changes
-
-    Include both normal and abnormal findings.
-    Use exact measurements and descriptions from the text.
-    """
+model = genai.GenerativeModel(
+  model_name="gemini-2.0-flash-exp",
+  generation_config=generation_config,
 )
 
-@extraction_agent.tool
-async def find_match(ctx: RunContext[ExtractorDeps], text: str) -> dict:
-    """Find matching term in reference data"""
-    return ctx.deps.mapper.find_match(text)
+prompt = """
+You are an expert radiologist specializing in structured data extraction from radiology reports. You must parse the following text as a radiology report and produce a single JSON object matching this schema:
 
-class Extractor:
-    def __init__(self, reference_df: pd.DataFrame):
-        self.mapper = SimilarityMapper(reference_df)
+{
+  "report": string,               // Original report text
+  "modality": string,             // Overall imaging modality (e.g., CT/MRI/PET, or specific modalities)
+  "primary_location": string,     // Anatomical region of primary tumor (ICDO3 description, not the code)
+  "study_date": string,           // Date of current study (if present in the text)
+  "comparison_date": string,      // Date of any comparison study (if present)
+  "clinical_history": string,     // Relevant clinical history
+  "indication": string,           // Reason for the study
+  "normal_study": boolean,        // True if normal, False if not, only if explicitly stated
+  "target_lesions": [            // Array of target lesion measurements
+    {
+      "location": string,             
+      "current_value": number,        
+      "current_unit": string,         
+      "standardized_value_mm": number,
+      "prior_value": number,          
+      "prior_unit": string,           
+      "percent_change": number,       
+      "response_category": string,    
+      "is_target": boolean            
+    }
+  ],
+  "non_target_lesions": [         // Array of non-target lesion measurements
+    {
+      "location": string,
+      "current_value": number,
+      "current_unit": string,
+      "standardized_value_mm": number,
+      "prior_value": number,
+      "prior_unit": string,
+      "percent_change": number,
+      "response_category": string,
+      "is_target": boolean
+    }
+  ],
+  "new_lesions": [                // Array describing any new lesions
+    {
+      "location": string,
+      "description": string
+    }
+  ],
+  "reported_response": string,           // Response assessment as stated in the report
+  "recist_calculated_response": string,  // Overall calculated RECIST response
+  "classifications": [           // Classification categories identified in the report
+    {
+      "class_name": string,      // e.g. "Infection", "Metastasis", "Normal", etc.
+      "description": string,     // Description or notes about this finding
+      "confidence": number       // Confidence score if available (otherwise omit or set null)
+    }
+  ],
+  "other_findings": [            // Miscellaneous findings not captured elsewhere
+    {
+      "item": string,            // Type or name of the finding
+      "description": string      // Detailed description
+    }
+  ],
+  "ICDO3_site": string,          // ICD-O-3 code for the primary location
+  "ICDO3_site_term": string,     // Exact matched term for the primary location
+  "ICDO3_site_similarity": number,
+  "modality_specific": {         // Nested object for modality-specific details
+    "modality_type": string,     // One of: "Mammography", "Chest CT", "Brain Imaging", "PET/CT", "Other"
+    "mammography": {
+      "birads_category": string,
+      "breast_density": string,
+      "masses": [ { "location": string, "description": string } ],
+      "calcifications": [ { "location": string, "description": string } ],
+      "architectural_distortion": boolean,
+      "asymmetries": [ { "location": string, "description": string } ]
+    },
+    "chest_ct": {
+      "halo_sign": [ { "location": string, "description": string } ],
+      "cavitations": [ { "location": string, "description": string } ],
+      "fungal_nodules": [ { "location": string, "description": string } ],
+      "ground_glass_opacities": [ { "location": string, "description": string } ],
+      "air_crescent_signs": [ { "location": string, "description": string } ],
+      "other_fungal_findings": [ { "location": string, "description": string } ]
+    },
+    "brain_tumor": {
+      "tumor_details": { "size": string, "description": string },
+      "edema": { "description": string },
+      "mass_effect": { "description": string },
+      "enhancement_pattern": string,
+      "brain_region": string,
+      "additional_features": [ { "feature": string, "description": string } ]
+    },
+    "pet_ct": {
+      "radiopharmaceutical": string,
+      "injection_time": string,
+      "blood_glucose": number,
+      "uptake_time": string,
+      "suv_measurements": [
+        {
+          "location": string,
+          "suv_max": number,
+          "suv_mean": number,
+          "suv_peak": number,
+          "prior_suv_max": number,
+          "percent_change": number,
+          "metabolic_volume": number,
+          "measurement_time": string
+        }
+      ],
+      "total_lesion_glycolysis": number,
+      "background_suv": number,
+      "metabolic_response": string,
+      "uptake_pattern": string,
+      "additional_findings": [ { "finding": string, "description": string } ]
+    }
+  }
+}
 
-    async def process_report(self, text: str) -> SimpleReport:
-        try:
-            logger.info("Starting extraction...")
-            
-            deps = ExtractorDeps(mapper=self.mapper)
-            result = await extraction_agent.run(text)
-            result.data.text = text
-            
-            return result.data
-            
-        except Exception as e:
-            logger.error("Processing error", exc_info=True)
-            raise
+Instructions:
+1. **Read the provided radiology report** (which follows this instruction block).
+2. **Extract** all data that fits into the above JSON structure:
+   - **Study information:** modality, primary location, study/comparison dates, clinical history, indication, normal_study (if stated).
+   - **Lesions (RECIST):** target and non-target lesions, new lesions. Each lesion should include size measurements, prior sizes, % change, response category, and whether it is a target lesion or not.
+   - **Response assessment:** any explicitly stated assessment (reported_response), plus do not forget to assign the `recist_calculated_response` if possible (based on the logic in the code, e.g., presence of new lesions => "Progressive Disease", etc.).
+   - **Classification results:** e.g. Normal, Infection, Metastasis, Primary tumor, Effusion, Trauma, Hemorrhage, Thrombosis, Lymphadenopathy, Others. Provide a description for each classification. If the confidence is not stated, either omit or set to null.
+   - **Other findings:** anything not covered by the above categories but still reported. 
+   - If the text implies a specific modality (like "Mammogram," "PET/CT," "Brain MRI," etc.), create the corresponding nested object (`mammography`, `pet_ct`, `chest_ct`, or `brain_tumor`) within `"modality_specific"`. 
+   - Omit any sub-structures that do not apply. (For instance, if the modality is CT chest for fungal infections, fill `"chest_ct"`; if the modality is PET/CT, fill `"pet_ct"`, etc.)
+3. **Output** must be strictly in valid JSON format, with no extra keys or commentary. No markdown. No additional explanation.
+4. Do **not** leave any required JSON fields blank or missing—if something isn't mentioned, use `null`, an empty string, or an empty list (depending on the field type) rather than omitting the key.
 
-async def main():
-    try:
-        resources_path = Path(__file__).parent.parent / 'resources'
-        reference_df = pd.read_csv(resources_path / 'ICDO3Topography.csv')
-        
-        extractor = Extractor(reference_df)
-        
-        example_report = """
- Diagnosis: Lymphoma.
+Now, here is the radiology report text that you need to parse and convert into JSON. Your final output must be **only** one JSON object with the structure described above.
+
+[BEGIN REPORT TEXT]
+{{YOUR_Radiology_Report_HERE}}
+[END REPORT TEXT]
+
+"""
+
+case= """
+Diagnosis: Lymphoma.
 Reason: Follow-up.
 Comparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.
 Findings:
 Neck CT with IV contrast:
-There are unchanged enlarged hypoattenuating left cervical lymph nodes the largest seen at levels III measuring 1 cm in short axis.
-There are unchanged mildly enlarged right supraclavicular lymph nodes, none exceeding 1 cm in short axis.
+There are unchanged enlarged hypoattenuating left cervical lymph nodes the large
+st seen at levels III measuring 1 cm in short axis.
+There are unchanged mildly enlarged right supraclavicular lymph nodes, none exce
+eding 1 cm in short axis.
 There is no new cervical lymph node enlargement.
 Chest CT with IV contrast:
-There are unchanged multiple hypoattenuating conglomerate mediastinal lymph nodes are encasing the aortic arch and its major branches with no significant narrowing, for example the subcarinal lymph node measures 2 cm in short axis with no significant change.
+There are unchanged multiple hypoattenuating conglomerate mediastinal lymph node
+s are encasing the aortic arch and its major branches with no significant narrow
+ing, for example the subcarinal lymph node measures 2 cm in short axis with no s
+ignificant change.
 There is no new intrathoracic lymph node enlargement.
 There is no significant axillary lymph node enlargement.
 The mild pericardial thickening/effusion appears less significant.
@@ -170,27 +190,57 @@ There is no ascites.
 Unremarkable urinary bladder outline.
 There is no vertebral collapse.
 Impression:
-There has been no significant interval change regarding the hypoattenuating residual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan dated 2 February 2021.
+There has been no significant interval change regarding the hypoattenuating resi
+dual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan
+dated 2 February 2021.
 Dr. Mohammad Mujalli
 Radiologist
-        """
-        
-        result = await extractor.process_report(example_report)
-        
-        output_file = Path('example_output_gemini_2.json')
-        output_data = {
-            'analysis_timestamp': datetime.now().isoformat(),
-            'report_data': result.dict(exclude_none=True)
-        }
-        
-        with open(output_file, 'w') as f:
-            json.dump(output_data, f, indent=2)
-        
-        print(f"\nResults saved to {output_file}")
-        
-    except Exception as e:
-        logger.error(f"Error in main execution: {str(e)}")
-        raise
+"""
 
-if __name__ == "__main__":
-    asyncio.run(main())
+prompt = prompt.replace("{{YOUR_Radiology_Report_HERE}}", case)
+
+chat_session = model.start_chat(
+  history=[
+    {
+      "role": "user",
+      "parts": [prompt]
+               
+    },
+    
+  ]
+)
+
+response = chat_session.send_message(prompt)
+
+# Add debugging print statements
+print("Raw response:")
+print(response.text)
+
+# Save the response to a JSON file
+try:
+    # Clean the response text by removing markdown code block markers
+    cleaned_response = response.text
+    if cleaned_response.startswith('```json'):
+        cleaned_response = cleaned_response.replace('```json', '', 1)
+    if cleaned_response.endswith('```'):
+        cleaned_response = cleaned_response.rsplit('```', 1)[0]
+    cleaned_response = cleaned_response.strip()
+
+     # Use regular expression to extract only the JSON object
+    match = re.search(r'{.*}', cleaned_response, re.DOTALL)
+    if match:
+        cleaned_response = match.group(0)
+    
+    # Parse the cleaned response text as JSON
+    json_data = json.loads(cleaned_response)
+    
+    # Save to a file with proper formatting
+    with open('extractor_gemini_output.json', 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, indent=2, ensure_ascii=False)
+    print("Successfully saved response to extractor_gemini_output.json")
+except json.JSONDecodeError as e:
+    print(f"Error: Could not parse response as JSON: {e}")
+    print("Response content:")
+    print(response.text)
+except IOError as e:
+    print(f"Error: Could not save file: {e}")
