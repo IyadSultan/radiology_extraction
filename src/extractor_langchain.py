@@ -123,12 +123,44 @@ class ModalitySpecific(BaseModel):
 class Lesion(BaseModel):
     """Model for lesion measurements"""
     location: str = Field(description="Anatomical location of lesion")
-    current_value: Optional[float] = Field(None, description="Current measurement value")
-    current_unit: Optional[str] = Field(None, description="Unit of measurement (e.g., mm, cm)")
+    current_value: float = Field(description="Current measurement value")
+    current_unit: str = Field(description="Unit of measurement (mm/cm)")
+    standardized_value_mm: float = Field(description="Measurement standardized to mm")
     prior_value: Optional[float] = Field(None, description="Previous measurement value")
     prior_unit: Optional[str] = Field(None, description="Unit of previous measurement")
-    response_category: Optional[str] = Field(None, description="Response category for this lesion")
     percent_change: Optional[float] = Field(None, description="Percent change from prior")
+    response_category: str = Field(description="Response category for this lesion")
+    is_target: bool = Field(description="Whether this is a target lesion")
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.standardize_measurements()
+    
+    def standardize_measurements(self):
+        """Standardize measurements to mm and calculate percent change"""
+        # Convert current value to mm
+        if self.current_unit == 'cm':
+            self.standardized_value_mm = self.current_value * 10
+        elif self.current_unit == 'mm':
+            self.standardized_value_mm = self.current_value
+        
+        # Calculate percent change if prior measurements exist
+        if self.prior_value is not None and self.prior_unit is not None:
+            prior_mm = self.prior_value * 10 if self.prior_unit == 'cm' else self.prior_value
+            
+            if prior_mm > 0:
+                self.percent_change = ((self.standardized_value_mm - prior_mm) / prior_mm) * 100
+                
+                # Set response category based on RECIST criteria
+                if self.is_target:
+                    if self.standardized_value_mm == 0:
+                        self.response_category = "Complete Response"
+                    elif self.percent_change <= -30:
+                        self.response_category = "Partial Response"
+                    elif self.percent_change >= 20:
+                        self.response_category = "Progressive Disease"
+                    else:
+                        self.response_category = "Stable Disease"
 
 class RadiologyReport(BaseModel):
     """Main model for radiology report extraction"""
@@ -450,21 +482,29 @@ class EnhancedRadiologyExtractor:
             
             1. For measurements:
                - Extract numeric values and units separately
-               - Convert all measurements to cm if given in mm
+               - Convert all measurements to standardized mm values
                - Include location for each measurement
+               - Mark target vs non-target lesions
+               - Calculate percent change if prior measurements exist
+               - Set response category based on RECIST criteria
                
-            2. For classifications:
-               - Categorize findings into appropriate classes (e.g., Lymphadenopathy, Effusion, Normal)
-               - Each classification must have a class_name and description
-               - Common categories include: Normal, Infection, Metastasis, Primary tumor, Effusion, etc.
+            2. For target lesions:
+               - Location must be specific (e.g., "Mediastinal lymph nodes (subcarinal)")
+               - Current value must be in numeric form
+               - Units must be either 'mm' or 'cm'
+               - Include standardized value in mm
+               - Calculate percent change if prior measurements exist
+               - Set is_target to true
                
-            3. For lesions:
-               - Record location, size, and units
-               - Note any changes from prior studies
+            3. For non-target lesions:
+               - Follow same format as target lesions
+               - Set is_target to false
                
-            4. For other findings:
-               - Each finding must have an item and description
-               - Format as objects with these fields
+            4. Response categories must be one of:
+               - "Complete Response"
+               - "Partial Response"
+               - "Stable Disease"
+               - "Progressive Disease"
                
             {format_instructions}
             """),

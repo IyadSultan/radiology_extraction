@@ -1,5 +1,5 @@
 {
-  "analysis_timestamp": "2024-12-13T14:18:17.948184",
+  "analysis_timestamp": "2024-12-13T14:24:13.973836",
   "report_data": {
     "report": "\n Diagnosis: Lymphoma.\nReason: Follow-up.\nComparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.\nFindings:\nNeck CT with IV contrast:\nThere are unchanged enlarged hypoattenuating left cervical lymph nodes the large\nst seen at levels III measuring 1 cm in short axis.\nThere are unchanged mildly enlarged right supraclavicular lymph nodes, none exce\neding 1 cm in short axis.\nThere is no new cervical lymph node enlargement.\nChest CT with IV contrast:\nThere are unchanged multiple hypoattenuating conglomerate mediastinal lymph node\ns are encasing the aortic arch and its major branches with no significant narrow\ning, for example the subcarinal lymph node measures 2 cm in short axis with no s\nignificant change.\nThere is no new intrathoracic lymph node enlargement.\nThere is no significant axillary lymph node enlargement.\nThe mild pericardial thickening/effusion appears less significant.\nThere is a new trace amount of right pleural effusion.\nThere is no significant left pleural effusion.\nThere is no pulmonary nodule/mass.\nThere is no pulmonary consolidation.\nAbdomen and pelvis CT scan with contrast:\nNormal liver, spleen, pancreas, adrenals and both kidneys.\nThere is no hydronephrosis bilaterally.\nUnremarkable gallbladder.\nThere is no intra or extrahepatic biliary tree dilatation.\nThere is no significant retroperitoneal or pelvic lymph node enlargement.\nThere is no ascites.\nUnremarkable urinary bladder outline.\nThere is no vertebral collapse.\nImpression:\nThere has been no significant interval change regarding the hypoattenuating resi\ndual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan\ndated 2 February 2021.\nDr. Mohammad Mujalli\nRadiologist\n",
     "modality": "CT",
@@ -36,14 +36,43 @@
       },
       {
         "class_name": "Effusion",
-        "description": "New trace amount of right pleural effusion. Mild pericardial thickening/effusion appears less significant."
-      },
-      {
-        "class_name": "Normal",
-        "description": "Normal liver, spleen, pancreas, adrenals and both kidneys. No hydronephrosis bilaterally. Unremarkable gallbladder. No intra or extrahepatic biliary tree dilatation. No significant retroperitoneal or pelvic lymph node enlargement. No ascites. Unremarkable urinary bladder outline. No vertebral collapse."
+        "description": "Mild pericardial thickening/effusion appears less significant. New trace amount of right pleural effusion."
       }
     ],
-    "other_findings": [],
+    "other_findings": [
+      {
+        "item": "Liver, spleen, pancreas, adrenals and both kidneys",
+        "description": "Normal"
+      },
+      {
+        "item": "Hydronephrosis",
+        "description": "No hydronephrosis bilaterally"
+      },
+      {
+        "item": "Gallbladder",
+        "description": "Unremarkable"
+      },
+      {
+        "item": "Intra or extrahepatic biliary tree dilatation",
+        "description": "None"
+      },
+      {
+        "item": "Retroperitoneal or pelvic lymph node enlargement",
+        "description": "None"
+      },
+      {
+        "item": "Ascites",
+        "description": "None"
+      },
+      {
+        "item": "Urinary bladder outline",
+        "description": "Unremarkable"
+      },
+      {
+        "item": "Vertebral collapse",
+        "description": "None"
+      }
+    ],
     "reported_response": "No significant interval change regarding the hypoattenuating residual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan dated 2 February 2021.",
     "recist_calculated_response": "Not Evaluable",
     "ICDO3_site": "C76.3",
