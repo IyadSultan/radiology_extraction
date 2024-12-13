@@ -1,37 +1,46 @@
 {
-  "analysis_timestamp": "2024-12-10T19:14:32.678365",
+  "analysis_timestamp": "2024-12-13T13:36:21.064611",
   "report_data": {
     "report": "\n Diagnosis: Lymphoma.\nReason: Follow-up.\nComparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.\nFindings:\nNeck CT with IV contrast:\nThere are unchanged enlarged hypoattenuating left cervical lymph nodes the large\nst seen at levels III measuring 1 cm in short axis.\nThere are unchanged mildly enlarged right supraclavicular lymph nodes, none exce\neding 1 cm in short axis.\nThere is no new cervical lymph node enlargement.\nChest CT with IV contrast:\nThere are unchanged multiple hypoattenuating conglomerate mediastinal lymph node\ns are encasing the aortic arch and its major branches with no significant narrow\ning, for example the subcarinal lymph node measures 2 cm in short axis with no s\nignificant change.\nThere is no new intrathoracic lymph node enlargement.\nThere is no significant axillary lymph node enlargement.\nThe mild pericardial thickening/effusion appears less significant.\nThere is a new trace amount of right pleural effusion.\nThere is no significant left pleural effusion.\nThere is no pulmonary nodule/mass.\nThere is no pulmonary consolidation.\nAbdomen and pelvis CT scan with contrast:\nNormal liver, spleen, pancreas, adrenals and both kidneys.\nThere is no hydronephrosis bilaterally.\nUnremarkable gallbladder.\nThere is no intra or extrahepatic biliary tree dilatation.\nThere is no significant retroperitoneal or pelvic lymph node enlargement.\nThere is no ascites.\nUnremarkable urinary bladder outline.\nThere is no vertebral collapse.\nImpression:\nThere has been no significant interval change regarding the hypoattenuating resi\ndual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan\ndated 2 February 2021.\nDr. Mohammad Mujalli\nRadiologist\n        ",
-    "modality": "PET/CT",
+    "modality": "Chest CT",
     "primary_location": "Intrathoracic lymph node",
     "comparison_date": "2021-02-02",
+    "clinical_history": "Lymphoma",
     "indication": "Follow-up",
     "target_lesions": [
       {
-        "location": "Subcarinal lymph node",
-        "current_value": 20.0,
+        "location": "Mediastinal lymph nodes (subcarinal)",
+        "current_value": 20,
         "current_unit": "mm",
-        "standardized_value_mm": 20.0,
-        "prior_value": 20.0,
+        "standardized_value_mm": 20,
+        "prior_value": 20,
         "prior_unit": "mm",
-        "percent_change": 0.0,
+        "percent_change": 0,
         "response_category": "Stable Disease",
         "is_target": true
       }
     ],
     "non_target_lesions": [
       {
-        "location": "Left cervical lymph nodes at level III",
-        "current_value": 10.0,
+        "location": "Left cervical lymph nodes",
+        "current_value": 10,
         "current_unit": "mm",
-        "standardized_value_mm": 10.0,
+        "standardized_value_mm": 10,
+        "prior_value": 10,
+        "prior_unit": "mm",
+        "percent_change": 0,
+        "response_category": "Stable Disease",
         "is_target": false
       },
       {
         "location": "Right supraclavicular lymph nodes",
-        "current_value": 10.0,
+        "current_value": 10,
         "current_unit": "mm",
-        "standardized_value_mm": 10.0,
+        "standardized_value_mm": 10,
+        "prior_value": 10,
+        "prior_unit": "mm",
+        "percent_change": 0,
+        "response_category": "Stable Disease",
         "is_target": false
       }
     ],
@@ -41,28 +50,24 @@
     "classifications": [
       {
         "class_name": "Lymphadenopathy",
-        "description": "Unchanged enlarged hypoattenuating left cervical lymph nodes largest seen at levels III; unchanged mildly enlarged right supraclavicular lymph nodes; unchanged mediastinal lymph nodes encasing the aortic arch with no significant change."
+        "description": "Unchanged enlarged hypoattenuating left cervical lymph nodes measuring 1 cm in short axis at level III. Unchanged mildly enlarged right supraclavicular lymph nodes, none exceeding 1 cm in short axis. Unchanged multiple hypoattenuating conglomerate mediastinal lymph nodes encasing the aortic arch with no significant change in subcarinal lymph node measuring 2 cm."
       },
       {
         "class_name": "Effusion",
-        "description": "New trace amount of right pleural effusion; mild pericardial thickening/effusion appears less significant."
+        "description": "New trace amount of right pleural effusion."
       }
     ],
     "other_findings": [
       {
-        "item": "Organ assessment",
-        "description": "Normal liver, spleen, pancreas, adrenals and both kidneys. Unremarkable gallbladder. No hydronephrosis bilaterally. No intra or extrahepatic biliary tree dilatation."
-      },
-      {
-        "item": "Lymph node assessment",
-        "description": "No new cervical, intrathoracic, retroperitoneal, or pelvic lymph node enlargement."
+        "item": "Pericardial thickening/effusion",
+        "description": "The mild pericardial thickening/effusion appears less significant."
       }
     ],
     "ICDO3_site": "C77.1",
     "ICDO3_site_term": "Intrathoracic lymph node",
     "ICDO3_site_similarity": 0.7338430881500244,
     "modality_specific": {
-      "modality_type": "PET/CT"
+      "modality_type": "Chest CT"
     }
   }
 }
