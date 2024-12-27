@@ -1,0 +1,63 @@
+{
+  "analysis_timestamp": "2024-12-27T23:31:20.925459",
+  "report_data": {
+    "report": "\n Diagnosis: Lymphoma.\nReason: Follow-up.\nComparison: Comparison made to the CT part of PET CT scan dated 2 February 2021.\nFindings:\nNeck CT with IV contrast:\nThere are unchanged enlarged hypoattenuating left cervical lymph nodes the large\nst seen at levels III measuring 1 cm in short axis.\nThere are unchanged mildly enlarged right supraclavicular lymph nodes, none exce\neding 1 cm in short axis.\nThere is no new cervical lymph node enlargement.\nChest CT with IV contrast:\nThere are unchanged multiple hypoattenuating conglomerate mediastinal lymph node\ns are encasing the aortic arch and its major branches with no significant narrow\ning, for example the subcarinal lymph node measures 2 cm in short axis with no s\nignificant change.\nThere is no new intrathoracic lymph node enlargement.\nThere is no significant axillary lymph node enlargement.\nThe mild pericardial thickening/effusion appears less significant.\nThere is a new trace amount of right pleural effusion.\nThere is no significant left pleural effusion.\nThere is no pulmonary nodule/mass.\nThere is no pulmonary consolidation.\nAbdomen and pelvis CT scan with contrast:\nNormal liver, spleen, pancreas, adrenals and both kidneys.\nThere is no hydronephrosis bilaterally.\nUnremarkable gallbladder.\nThere is no intra or extrahepatic biliary tree dilatation.\nThere is no significant retroperitoneal or pelvic lymph node enlargement.\nThere is no ascites.\nUnremarkable urinary bladder outline.\nThere is no vertebral collapse.\nImpression:\nThere has been no significant interval change regarding the hypoattenuating resi\ndual lymph nodes seen above the diaphragm compared to the CT part of PET/CT scan\ndated 2 February 2021.\nDr. Mohammad Mujalli\nRadiologist\n        ",
+    "modality": "Chest CT",
+    "primary_location": "Lymph nodes of multiple regions",
+    "comparison_date": "2021-02-02",
+    "clinical_history": "Follow-up for Lymphoma.",
+    "target_lesions": [
+      {
+        "location": "subcarinal lymph node",
+        "current_value": 2.0,
+        "current_unit": "cm",
+        "standardized_value_mm": 20.0,
+        "prior_value": 2.0,
+        "prior_unit": "cm",
+        "percent_change": 0.0,
+        "response_category": "Stable Disease",
+        "is_target": true
+      }
+    ],
+    "non_target_lesions": [
+      {
+        "location": "left cervical lymph nodes",
+        "current_value": 10.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 10.0,
+        "prior_value": 10.0,
+        "prior_unit": "mm",
+        "percent_change": 0.0,
+        "response_category": "unchanged",
+        "is_target": false
+      },
+      {
+        "location": "right supraclavicular lymph nodes",
+        "current_value": 10.0,
+        "current_unit": "mm",
+        "standardized_value_mm": 10.0,
+        "prior_value": 10.0,
+        "prior_unit": "mm",
+        "percent_change": 0.0,
+        "response_category": "unchanged",
+        "is_target": false
+      }
+    ],
+    "new_lesions": [],
+    "reported_response": "unchanged",
+    "classifications": [
+      {
+        "class_name": "Lymphadenopathy",
+        "description": "Unchanged enlarged hypoattenuating left cervical and right supraclavicular lymph nodes; conglomerate mediastinal lymph nodes encasing the aortic arch with no significant change."
+      },
+      {
+        "class_name": "Effusion",
+        "description": "New trace amount of right pleural effusion."
+      }
+    ],
+    "other_findings": [],
+    "modality_specific": {
+      "modality_type": "Chest CT"
+    }
+  }
+}

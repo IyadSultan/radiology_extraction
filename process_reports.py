@@ -9,13 +9,14 @@ import json
 import logging
 from datetime import datetime
 from tqdm import tqdm
+import argparse
 
 # Add the src directory to Python path
 src_path = str(Path(__file__).parent / 'src')
 if src_path not in sys.path:
     sys.path.append(src_path)
 
-from extractor import RadiologyExtractor
+from extractor import EnhancedRadiologyExtractor
 
 # Configure logging
 logging.basicConfig(
@@ -38,20 +39,21 @@ async def process_reports(input_file: str, output_file: str, num_reports: int = 
         logger.info(f"Reading input file: {input_file}")
         df = pd.read_csv(input_file)
         
+        # Limit the dataframe to num_reports
+        df = df.head(num_reports)
+        
         # Initialize extractor
         resources_path = Path(__file__).parent / 'resources'
-        modalities_df = pd.read_csv(resources_path / 'modalities.csv')
         topography_df = pd.read_csv(resources_path / 'ICDO3Topography.csv')
-        extractor = RadiologyExtractor(modalities_df, topography_df)
+        extractor = EnhancedRadiologyExtractor(topography_df)
         
-        # Process reports until we have num_reports successful results
+        # Process reports
         results = []
         processed = 0
-        idx = 0
+        total = len(df)
         
-        with tqdm(total=num_reports, desc="Processing reports") as pbar:
-            while processed < num_reports and idx < len(df):
-                row = df.iloc[idx]
+        with tqdm(total=total, desc="Processing reports") as pbar:
+            for idx, row in df.iterrows():
                 try:
                     report_info = {
                         'MRN': row['MRN'],
@@ -60,13 +62,13 @@ async def process_reports(input_file: str, output_file: str, num_reports: int = 
                         'REPORT': row['REPORT']
                     }
                     
-                    # Process report text
-                    result = await extractor.process_report(row['REPORT'])
+                    # Process report text with procedure
+                    result = await extractor.process_report(row['REPORT'], procedure=row['PROCEDURE'])
                     
                     # Combine base info with extraction results
                     combined_result = {
                         **report_info,
-                        **result.dict(exclude_none=True)  # Exclude None values for cleaner output
+                        **result.dict(exclude_none=True)
                     }
                     
                     results.append(combined_result)
@@ -80,13 +82,6 @@ async def process_reports(input_file: str, output_file: str, num_reports: int = 
                         'error': str(e)
                     }
                     results.append(error_result)
-                
-                idx += 1
-                
-                # If we've processed all available reports but haven't reached num_reports
-                if idx >= len(df) and processed < num_reports:
-                    logger.warning(f"Only {processed} reports available in input file")
-                    break
         
         # Save results
         logger.info(f"Saving results to {output_file}")
@@ -124,6 +119,14 @@ def check_resources():
 
 async def main():
     """Main function"""
+    # Add argument parsing
+    parser = argparse.ArgumentParser(description='Process radiology reports')
+    parser.add_argument('-n', '--num_reports', type=int, default=200,
+                      help='Number of reports to process (default: 200)')
+    parser.add_argument('-o', '--output_file', type=str, default="radiology_results.csv",
+                      help='Output file name (default: radiology_results.csv)')
+    args = parser.parse_args()
+
     # Check for required files
     missing_files = check_resources()
     if missing_files:
@@ -133,13 +136,14 @@ async def main():
         return
     
     input_file = "data/Results.csv"
-    output_file = "radiology_results_200.csv"
     
     if not Path(input_file).exists():
         logger.error(f"Input file not found: {input_file}")
         return
     
-    await process_reports(input_file, output_file, num_reports=200)
+    await process_reports(input_file, args.output_file, num_reports=args.num_reports)
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+#python process_reports.py -n 5 -o my_results.csv

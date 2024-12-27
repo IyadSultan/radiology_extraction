@@ -271,6 +271,10 @@ Your task is to parse radiology reports and output JSON data following a specifi
 
 # Split the prompt into system and user messages
 try:
+    # Extract procedure from CSV data if available, otherwise use default
+    procedure = case.get('PROCEDURE') if isinstance(case, dict) else "Chest CT"
+    print(f"\nUsing procedure: {procedure}")
+
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -280,7 +284,8 @@ try:
             },
             {
                 "role": "user",
-                "content": f"""Please parse this radiology report and output ONLY a JSON object following this schema:
+                "content": f"""Please parse this radiology report and output ONLY a JSON object following this schema.
+Procedure type: {procedure}
 
 {prompt}
 

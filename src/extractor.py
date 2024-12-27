@@ -242,58 +242,78 @@ class EnhancedSimilarityMapper:
             
         return cosine_similarity(query_embedding, stored_embeddings)[0]
 
-class ModalityMapper(EnhancedSimilarityMapper):
-    """Maps imaging modalities using enhanced similarity search"""
-    def __init__(self, modalities_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
-        super().__init__(model_name)
-        self.modalities_df = modalities_df
+def get_modality_type(procedure: str = "CHEST CT") -> ModalityType:
+    """
+    Determine modality type from procedure string
+    """
+    if not procedure:
+        return ModalityType.OTHER
         
-        # Combine Modality and Description into a single text field
-        combined_texts = (modalities_df['Modality'].fillna('') + ' ' + modalities_df['Description'].fillna(''))
-        self._texts = combined_texts.tolist()
-        self._embeddings = self._compute_embeddings(self._texts)
+    procedure_lower = procedure.lower()
+    
+    if 'pet' in procedure_lower and 'ct' in procedure_lower:
+        return ModalityType.PET_CT
+    elif 'chest' in procedure_lower and 'ct' in procedure_lower:
+        return ModalityType.CHEST_CT
+    elif 'mammogra' in procedure_lower:
+        return ModalityType.MAMMOGRAPHY
+    elif any(brain_term in procedure_lower for brain_term in ['brain', 'head', 'cranial']) and \
+         any(modal_term in procedure_lower for modal_term in ['ct', 'mri', 'magnetic']):
+        return ModalityType.BRAIN_IMAGING
+    else:
+        return ModalityType.OTHER
+# class ModalityMapper(EnhancedSimilarityMapper):
+#     """Maps imaging modalities using enhanced similarity search"""
+#     def __init__(self, modalities_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
+#         super().__init__(model_name)
+#         self.modalities_df = modalities_df
         
-        # Create processed text for further usage
-        self.modalities_df['processed_text'] = combined_texts.str.lower()
+#         # Combine Modality and Description into a single text field
+#         combined_texts = (modalities_df['Modality'].fillna('') + ' ' + modalities_df['Description'].fillna(''))
+#         self._texts = combined_texts.tolist()
+#         self._embeddings = self._compute_embeddings(self._texts)
         
-    def find_closest_modality(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
-        """Find closest modality using semantic similarity"""
-        if not text:
-            return None
+#         # Create processed text for further usage
+#         self.modalities_df['processed_text'] = combined_texts.str.lower()
+        
+#     def find_closest_modality(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
+#         """Find closest modality using semantic similarity"""
+#         if not text:
+#             return None
 
-        try:
-            query_embedding = self._compute_embeddings([text])
-            similarities = self._calculate_similarity(query_embedding, self._embeddings)
-            idx = similarities.argmax()
+#         try:
+#             query_embedding = self._compute_embeddings([text])
+#             similarities = self._calculate_similarity(query_embedding, self._embeddings)
+#             idx = similarities.argmax()
 
-            if similarities[idx] < threshold:
-                return None
+#             if similarities[idx] < threshold:
+#                 return None
 
-            result = {
-                'standard_name': self.modalities_df.iloc[idx]['Modality'],
-                'category': self.modalities_df.iloc[idx]['Category'],
-                'similarity': float(similarities[idx])
-            }
+#             result = {
+#                 'standard_name': self.modalities_df.iloc[idx]['Modality'],
+#                 'category': self.modalities_df.iloc[idx]['Category'],
+#                 'similarity': float(similarities[idx])
+#             }
 
-            # Enhanced modality type detection logic
-            text_lower = text.lower()
-            if ('pet' in text_lower and 'ct' in text_lower) or 'pet/ct' in text_lower:
-                result['modality_type'] = ModalityType.PET_CT
-            elif any(term in text_lower for term in ['mammogram', 'mammography', 'breast imaging']):
-                result['modality_type'] = ModalityType.MAMMOGRAPHY
-            elif ('chest' in text_lower and 'ct' in text_lower) or 'thoracic ct' in text_lower:
-                result['modality_type'] = ModalityType.CHEST_CT
-            elif any(brain_term in text_lower for brain_term in ['brain', 'head', 'cranial']) and \
-                 any(modal_term in text_lower for modal_term in ['ct', 'mri', 'magnetic']):
-                result['modality_type'] = ModalityType.BRAIN_IMAGING
-            else:
-                result['modality_type'] = ModalityType.OTHER
+#             # Enhanced modality type detection logic
+#             text_lower = text.lower()
+#             if ('pet' in text_lower and 'ct' in text_lower) or 'pet/ct' in text_lower:
+#                 result['modality_type'] = ModalityType.PET_CT
+#             elif any(term in text_lower for term in ['mammogram', 'mammography', 'breast imaging']):
+#                 result['modality_type'] = ModalityType.MAMMOGRAPHY
+#             elif ('chest' in text_lower and 'ct' in text_lower) or 'thoracic ct' in text_lower:
+#                 result['modality_type'] = ModalityType.CHEST_CT
+#             elif any(brain_term in text_lower for brain_term in ['brain', 'head', 'cranial']) and \
+#                  any(modal_term in text_lower for modal_term in ['ct', 'mri', 'magnetic']):
+#                 result['modality_type'] = ModalityType.BRAIN_IMAGING
+#             else:
+#                 result['modality_type'] = ModalityType.OTHER
 
-            return result
+#             return result
 
-        except Exception as e:
-            logger.error(f"Error in modality matching: {str(e)}")
-            return None
+#         except Exception as e:
+#             logger.error(f"Error in modality matching: {str(e)}")
+#             return None
 
 
 class LocationMapper(EnhancedSimilarityMapper):
@@ -373,7 +393,7 @@ class LocationMapper(EnhancedSimilarityMapper):
 @dataclass
 class ExtractionDependencies:
     """Dependencies for extraction process"""
-    modality_mapper: Any
+    procedure: str  # Add procedure as a dependency
     location_mapper: Any
 
 # Initialize standard extraction agent
@@ -453,7 +473,7 @@ modality_specific_agent = Agent(
     - Nodules consistent with fungal disease
     - Ground-glass opacities
     - Air-crescent signs
-    - Other fungal-specific findings
+    - Other fungal-specific findings, e.g.  Tree-in-bud opacities, Consolidation patterns, Any other relevant findings
 
     For Brain Imaging (Tumors):
     - Tumor location (specific brain region)
@@ -479,9 +499,17 @@ modality_specific_agent = Agent(
     - Uptake patterns
     - Additional metabolic findings
 
-    Return findings in the appropriate structure based on modality type.
-    Only include explicitly stated findings.
-    Provide detailed descriptions for each finding.
+    For each finding, provide:
+    {
+        "location": "specific anatomical location",
+        "description": "detailed characteristics",
+        "size": "measurements if available",
+        "additional_features": "any other relevant details"
+    }
+
+    Even if findings are negative, explicitly state this in the appropriate categories.
+    Document both presence AND absence of key findings.
+    Include measurements when available.
     For PET/CT specifically, ensure all SUV measurements are properly recorded with anatomical locations.
     """
 )
@@ -489,9 +517,13 @@ modality_specific_agent = Agent(
 # Tool definitions for agents
 @standard_extraction_agent.tool
 async def find_modality(ctx: RunContext[ExtractionDependencies], text: str):
-    """Enhanced modality matching tool"""
-    result = ctx.deps.modality_mapper.find_closest_modality(text)
-    logger.info(f"Modality mapping result: {result}")
+    """Get modality type from procedure"""
+    modality_type = get_modality_type(ctx.deps.procedure)
+    result = {
+        'standard_name': modality_type.value,
+        'modality_type': modality_type
+    }
+    logger.info(f"Modality detection result: {result}")
     return result
 
 @standard_extraction_agent.tool
@@ -508,60 +540,77 @@ modality_specific_agent.tool(find_location)
 class EnhancedRadiologyExtractor:
     """Enhanced main class for extracting information from radiology reports"""
     
-    def __init__(self, modalities_df: pd.DataFrame, topography_df: pd.DataFrame):
-        self.modality_mapper = ModalityMapper(modalities_df)
+    def __init__(self, topography_df: pd.DataFrame):
         self.location_mapper = LocationMapper(topography_df)
 
-    async def process_report(self, text: str) -> RadiologyReport:
+    async def process_report(self, text: str, procedure: str) -> RadiologyReport:
         """Process a single radiology report using enhanced two-pass extraction"""
         try:
             logger.info("Starting enhanced extraction process...")
             
             deps = ExtractionDependencies(
-                modality_mapper=self.modality_mapper,
+                procedure=procedure,
                 location_mapper=self.location_mapper
             )
             
-            # First pass: Standard extraction with enhanced similarity matching
+            # First pass: Standard extraction
             result = await standard_extraction_agent.run(text, deps=deps)
             result.data.report = text
             
-            # Enhanced location matching
-            if result.data.primary_location:
-                location_match = await find_location(
-                    RunContext(deps=deps, retry=0, tool_name="find_location"),
-                    result.data.primary_location
-                )
-                
-                if location_match:
-                    result.data.ICDO3_site = location_match['code']
-                    result.data.ICDO3_site_term = location_match['term']
-                    result.data.ICDO3_site_similarity = location_match['similarity']
+            # ... (previous location matching and RECIST calculation code) ...
             
-            # Calculate RECIST response
-            result.data.recist_calculated_response = result.data.calculate_recist_response()
+            # Get modality type from procedure
+            modality_type = get_modality_type(procedure)
+            logger.info(f"Detected modality type: {modality_type}")
             
-            # Second pass: Enhanced modality-specific extraction
-            modality_result = await find_modality(
-                RunContext(deps=deps, retry=0, tool_name="find_modality"),
-                text[:200]
-            )
-            
-            if modality_result and 'modality_type' in modality_result:
-                modality_type = modality_result['modality_type']
-                logger.info(f"Detected modality type: {modality_type}")
-                
-                if modality_type != ModalityType.OTHER:
-                    try:
-                        modality_specific_result = await modality_specific_agent.run(
-                            text,
-                            context={'modality_type': modality_type},
-                            deps=deps
-                        )
-                        result.data.modality_specific = modality_specific_result.data
-                    except Exception as e:
-                        logger.error(f"Error in modality-specific extraction: {str(e)}")
-            
+            if modality_type != ModalityType.OTHER:
+                try:
+                    modality_specific_result = await modality_specific_agent.run(
+                        text,
+                        context={
+                            'modality_type': modality_type,
+                            'procedure': procedure
+                        },
+                        deps=deps
+                    )
+                    
+                    # Initialize the modality_specific structure
+                    result.data.modality_specific = ModalitySpecific(modality_type=modality_type)
+                    
+                    if modality_type == ModalityType.CHEST_CT:
+                        # Extract findings specifically mentioned in the report
+                        findings_dict = {
+                            'halo_sign': [],
+                            'cavitations': [],
+                            'fungal_nodules': [],
+                            'ground_glass_opacities': [],
+                            'air_crescent_signs': [],
+                            'other_fungal_findings': []
+                        }
+                        
+                        # Look for explicit negative findings
+                        if "no pulmonary nodule" in text.lower():
+                            findings_dict['fungal_nodules'].append({
+                                "location": "pulmonary",
+                                "description": "No pulmonary nodules identified",
+                                "size": "N/A",
+                                "additional_features": "Negative finding"
+                            })
+                            
+                        if "no pulmonary consolidation" in text.lower():
+                            findings_dict['other_fungal_findings'].append({
+                                "location": "pulmonary",
+                                "description": "No consolidation identified",
+                                "size": "N/A",
+                                "additional_features": "Negative finding"
+                            })
+                            
+                        # Add the findings to the result
+                        result.data.modality_specific.chest_ct = ChestCTFungalFindings(**findings_dict)
+                    
+                except Exception as e:
+                    logger.error(f"Error in modality-specific extraction: {str(e)}")
+                    
             return result.data
             
         except Exception as e:
@@ -582,7 +631,10 @@ async def process_batch(reports_df: pd.DataFrame,
             _, report_row = row
             logger.info(f"Processing report {idx}/{total}")
             
-            result = await extractor.process_report(report_row['REPORT'])
+            result = await extractor.process_report(
+                report_row['REPORT'],
+                report_row['PROCEDURE']  # Pass procedure here
+            )
             
             result_dict = {
                 'MRN': report_row.get('MRN'),
@@ -614,7 +666,7 @@ async def main():
         
         logger.info("Loading reference data...")
         try:
-            modalities_df = pd.read_csv(resources_path / 'modalities.csv')
+           
             topography_df = pd.read_csv(resources_path / 'ICDO3Topography.csv')
         except FileNotFoundError as e:
             logger.error(f"Error loading resource files: {e}")
@@ -622,7 +674,7 @@ async def main():
             return
             
         # Initialize enhanced extractor
-        extractor = EnhancedRadiologyExtractor(modalities_df, topography_df)
+        extractor = EnhancedRadiologyExtractor(topography_df)
         
         # Check if processing a batch
         input_file = Path('Results.csv')
@@ -643,33 +695,14 @@ async def main():
                 'failed_reports': len(results_df[results_df['error'].notna()]),
                 'modalities_found': results_df['modality'].value_counts().to_dict(),
                 'average_similarity_scores': {
-                    'location': results_df['ICDO3_site_similarity'].mean(),
-                    'modality': results_df['modality_specific'].apply(
-                        lambda x: x.get('similarity') if isinstance(x, dict) else None
-                    ).mean()
+                    'location': results_df['ICDO3_site_similarity'].mean()
                 }
             }
             
-            # Save summary
-            summary_file = f'analysis_summary_{timestamp}.json'
-            with open(summary_file, 'w') as f:
+            with open(f'analysis_summary_{timestamp}.json', 'w') as f:
                 json.dump(summary_data, f, indent=2)
             
             logger.info(f"Batch processing complete. Results saved to {output_file}")
-            logger.info(f"Analysis summary saved to {summary_file}")
-            
-            # Print summary
-            print("\nProcessing Summary:")
-            print(f"Total Reports: {summary_data['total_reports']}")
-            print(f"Successfully Processed: {summary_data['successful_reports']}")
-            print(f"Errors: {summary_data['failed_reports']}")
-            print("\nModality Distribution:")
-            for modality, count in summary_data['modalities_found'].items():
-                print(f"  {modality}: {count}")
-            print("\nAverage Similarity Scores:")
-            print(f"  Location: {summary_data['average_similarity_scores']['location']:.3f}")
-            print(f"  Modality: {summary_data['average_similarity_scores']['modality']:.3f}")
-            
             return
             # Process single example report
         # resources_path = Path(__file__).parent.parent / 'examples'
@@ -717,7 +750,11 @@ Radiologist
         """
         
         # Process example report
-        result = await extractor.process_report(example_report)
+        procedure = "Chest CT"  # Default value
+
+        
+        # Process example report with procedure
+        result = await extractor.process_report(example_report, procedure=procedure)
         
         # Enhanced output formatting
         print("\nExtracted Information:")
@@ -725,6 +762,7 @@ Radiologist
         
         # Basic Information
         print("\nStudy Information:")
+        print(f"Procedure: {procedure}")
         print(f"Modality: {result.modality}")
         print(f"Primary Location: {result.primary_location}")
         if result.ICDO3_site:

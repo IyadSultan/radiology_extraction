@@ -1,2 +1,1 @@
 MRN,EXAM_DATE,evaluator_name,procedure,modality,primary_location,clinical_history,body_region,comparison_date,target_lesions,non_target_lesions,new_lesions,reported_response,recist_calculated_response,classifications,other_findings,overall_assessment,ICDO3_site,ICDO3_site_term,ICDO3_site_similarity,tumor_response,modality_specific,error,evaluation_timestamp
-14837731490332,2021-07-27 09:47:00.000,Iyad Sultan,False,False,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,2024-12-10 13:26:09

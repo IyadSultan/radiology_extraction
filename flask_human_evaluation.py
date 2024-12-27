@@ -43,59 +43,41 @@ def parse_json_filter(value):
 
 def load_data(current_index=0):
     try:
-        # Check if file exists
-        if not Path('radiology_results_10.csv').exists():
-            print("Error: radiology_results_10.csv not found")
+        # Check if file exists and print absolute path
+        file_path = Path('my_results.csv')
+        print(f"Looking for file at: {file_path.absolute()}")
+        if not file_path.exists():
+            print("Error: my_results.csv not found")
             return pd.DataFrame(), {}, {}
 
         # Load radiology results
-        print("Loading radiology_results_10.csv...")
-        results_df = pd.read_csv('radiology_results_200.csv')
-        print(f"Loaded {len(results_df)} rows from CSV")
+        print("Loading my_results.csv...")
+        results_df = pd.read_csv('my_results.csv')
+        print(f"CSV Structure:")
+        print(f"Columns: {results_df.columns.tolist()}")
+        print(f"Number of rows: {len(results_df)}")
+        
+        # Check if required columns exist
+        required_columns = ['REPORT', 'MRN', 'EXAM_DATE']
+        missing_columns = [col for col in required_columns if col not in results_df.columns]
+        if missing_columns:
+            print(f"Warning: Missing required columns: {missing_columns}")
+            return pd.DataFrame(), {}, {}
         
         # Drop rows where Report is missing or just contains placeholder text
+        initial_len = len(results_df)
         results_df = results_df[
             results_df['REPORT'].notna() & 
             ~results_df['REPORT'].str.contains('Report will be available upon request', case=False, na=False)
         ]
-        print(f"After filtering: {len(results_df)} rows")
-        
-        # Convert JSON string fields to objects
-        json_fields = ['target_lesions', 'non_target_lesions', 'new_lesions', 
-                      'classifications', 'other_findings']
-        for field in json_fields:
-            if field in results_df.columns:
-                print(f"Processing {field} field...")
-                results_df[field] = results_df[field].apply(lambda x: 
-                    safe_json_loads(x) if isinstance(x, str) else [])
-        
-        # Handle modality_specific separately
-        if 'modality_specific' in results_df.columns:
-            print("Processing modality_specific field...")
-            results_df['modality_specific'] = results_df['modality_specific'].apply(safe_json_loads)
-        
-        # Load previous evaluations if they exist
-        submitted_status = {}
-        previous_evaluations = {}
-        if Path('human_evaluation_results.csv').exists():
-            print("Loading previous evaluations...")
-            evaluated_df = pd.read_csv('human_evaluation_results.csv')
-            for _, row in evaluated_df.iterrows():
-                mrn = str(row['MRN'])
-                submitted_status[mrn] = True
-                previous_evaluations[mrn] = {
-                    col: row[col] 
-                    for col in row.index 
-                    if col not in ['MRN', 'EXAM_DATE', 'evaluator_name', 'evaluation_timestamp']
-                }
-            print(f"Loaded {len(previous_evaluations)} previous evaluations")
+        print(f"Filtered out {initial_len - len(results_df)} rows with missing or placeholder reports")
         
         if results_df.empty:
-            print("Warning: No reports found after processing")
-            return pd.DataFrame(), submitted_status, previous_evaluations
+            print("Warning: No valid reports found after filtering")
+            return pd.DataFrame(), {}, {}
             
-        print(f"Successfully processed all data. Returning {len(results_df)} reports")
-        return results_df, submitted_status, previous_evaluations
+        print(f"Successfully processed data. Returning {len(results_df)} reports")
+        return results_df, {}, {}
         
     except Exception as e:
         print(f"Error loading data: {str(e)}")
