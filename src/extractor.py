@@ -109,6 +109,12 @@ class ModalitySpecific(BaseModel):
     pet_ct: Optional[PETCTFindings] = None
 
 
+class NonTargetResponse(str, Enum):
+    COMPLETE_RESPONSE = "Complete Response"
+    NON_CR_NON_PD = "Non-CR/Non-PD"  
+    PROGRESSIVE_DISEASE = "Progressive Disease"
+    NOT_EVALUABLE = "Not Evaluable"
+
 
 class RECISTMeasurement(BaseModel):
     """Model for RECIST measurements"""
@@ -125,6 +131,14 @@ class RECISTMeasurement(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
         self.standardize_measurements()
+    def assess_non_target_response(self):
+        if not self.is_target:
+            if self.standardized_value_mm == 0:
+                self.response_category = NonTargetResponse.COMPLETE_RESPONSE.value
+            elif self.unequivocal_progression:  # Need to add this flag
+                self.response_category = NonTargetResponse.PROGRESSIVE_DISEASE.value
+            else:
+                self.response_category = NonTargetResponse.NON_CR_NON_PD.value
     
     def standardize_measurements(self):
         if self.current_value is not None:
@@ -173,9 +187,7 @@ class OtherFinding(BaseModel):
 class RadiologyReport(BaseModel):
     """Model for structured radiology report data"""
     report: str = Field(description="Original report text")
-    modality: str = Field(description="Imaging modality e.g. (CT/MRI/PET/mention specific modalities for Mammography, Chest CT (Fungal Infections), Brain Imaging)")
     primary_location: str = Field(description="Anatomical region of primary tumor using ICDO3 description (not code)")
-    study_date: Optional[str] = Field(default=None)
     comparison_date: Optional[str] = Field(default=None)
     clinical_history: Optional[str] = Field(default=None)
     indication: Optional[str] = Field(default=None)
@@ -186,6 +198,10 @@ class RadiologyReport(BaseModel):
     new_lesions: List[Dict[str, Any]] = Field(default_factory=list)
     
     reported_response: Optional[str] = Field(default=None)
+    response_category: Optional[str] = Field(
+        default=None, 
+        description="Choose from COMPLETE_RESPONSE, PARTIAL_RESPONSE, STABLE_DISEASE, PROGRESSIVE_DISEASE, NOT_EVALUABLE"
+    )
     recist_calculated_response: Optional[str] = Field(default=None)
     
     classifications: List[ClassificationResult] = Field(default_factory=list)
@@ -197,25 +213,41 @@ class RadiologyReport(BaseModel):
     
     modality_specific: Optional[ModalitySpecific] = None
 
+    def calculate_sum_of_diameters(self) -> float:
+        return sum(l.standardized_value_mm for l in self.target_lesions 
+                  if l.standardized_value_mm is not None)
+
     def calculate_recist_response(self) -> str:
-        """Calculate overall RECIST response"""
-        if self.new_lesions:
-            return ResponseCategory.PROGRESSIVE_DISEASE.value
-            
-        target_responses = [lesion.response_category for lesion in self.target_lesions 
-                          if lesion.response_category]
-                          
-        if not target_responses:
+        if not self.target_lesions and not self.non_target_lesions:
             return ResponseCategory.NOT_EVALUABLE.value
             
-        if all(r == ResponseCategory.COMPLETE_RESPONSE.value for r in target_responses):
-            return ResponseCategory.COMPLETE_RESPONSE.value
-        elif any(r == ResponseCategory.PROGRESSIVE_DISEASE.value for r in target_responses):
+        if self.new_lesions:
             return ResponseCategory.PROGRESSIVE_DISEASE.value
-        elif any(r == ResponseCategory.PARTIAL_RESPONSE.value for r in target_responses):
+
+        target_responses = [l.response_category for l in self.target_lesions if l.response_category]
+        non_target_responses = [l.response_category for l in self.non_target_lesions if l.response_category]
+        
+        # Handle missing measurements
+        if not all(target_responses) or not all(non_target_responses):
+            return ResponseCategory.NOT_EVALUABLE.value
+
+        # Complete Response: All targets CR, all non-targets CR, no new lesions
+        if (all(r == ResponseCategory.COMPLETE_RESPONSE.value for r in target_responses) and
+            all(r == NonTargetResponse.COMPLETE_RESPONSE.value for r in non_target_responses)):
+            return ResponseCategory.COMPLETE_RESPONSE.value
+            
+        # Progressive Disease: Any target PD, any non-target unequivocal PD, or new lesions
+        if (any(r == ResponseCategory.PROGRESSIVE_DISEASE.value for r in target_responses) or
+            any(r == NonTargetResponse.PROGRESSIVE_DISEASE.value for r in non_target_responses)):
+            return ResponseCategory.PROGRESSIVE_DISEASE.value
+            
+        # Partial Response: >=30% decrease from baseline in target lesions, no PD in non-targets
+        if (all(r == ResponseCategory.PARTIAL_RESPONSE.value for r in target_responses) and
+            not any(r == NonTargetResponse.PROGRESSIVE_DISEASE.value for r in non_target_responses)):
             return ResponseCategory.PARTIAL_RESPONSE.value
-        else:
-            return ResponseCategory.STABLE_DISEASE.value
+            
+        # Stable Disease: Neither PR nor PD criteria met
+        return ResponseCategory.STABLE_DISEASE.value
 
 class EnhancedSimilarityMapper:
     """Base class for enhanced similarity mapping using Sentence Transformers"""
@@ -262,58 +294,13 @@ def get_modality_type(procedure: str = "CHEST CT") -> ModalityType:
         return ModalityType.BRAIN_IMAGING
     else:
         return ModalityType.OTHER
-# class ModalityMapper(EnhancedSimilarityMapper):
-#     """Maps imaging modalities using enhanced similarity search"""
-#     def __init__(self, modalities_df: pd.DataFrame, model_name: str = 'all-MiniLM-L6-v2'):
-#         super().__init__(model_name)
-#         self.modalities_df = modalities_df
-        
-#         # Combine Modality and Description into a single text field
-#         combined_texts = (modalities_df['Modality'].fillna('') + ' ' + modalities_df['Description'].fillna(''))
-#         self._texts = combined_texts.tolist()
-#         self._embeddings = self._compute_embeddings(self._texts)
-        
-#         # Create processed text for further usage
-#         self.modalities_df['processed_text'] = combined_texts.str.lower()
-        
-#     def find_closest_modality(self, text: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
-#         """Find closest modality using semantic similarity"""
-#         if not text:
-#             return None
 
-#         try:
-#             query_embedding = self._compute_embeddings([text])
-#             similarities = self._calculate_similarity(query_embedding, self._embeddings)
-#             idx = similarities.argmax()
-
-#             if similarities[idx] < threshold:
-#                 return None
-
-#             result = {
-#                 'standard_name': self.modalities_df.iloc[idx]['Modality'],
-#                 'category': self.modalities_df.iloc[idx]['Category'],
-#                 'similarity': float(similarities[idx])
-#             }
-
-#             # Enhanced modality type detection logic
-#             text_lower = text.lower()
-#             if ('pet' in text_lower and 'ct' in text_lower) or 'pet/ct' in text_lower:
-#                 result['modality_type'] = ModalityType.PET_CT
-#             elif any(term in text_lower for term in ['mammogram', 'mammography', 'breast imaging']):
-#                 result['modality_type'] = ModalityType.MAMMOGRAPHY
-#             elif ('chest' in text_lower and 'ct' in text_lower) or 'thoracic ct' in text_lower:
-#                 result['modality_type'] = ModalityType.CHEST_CT
-#             elif any(brain_term in text_lower for brain_term in ['brain', 'head', 'cranial']) and \
-#                  any(modal_term in text_lower for modal_term in ['ct', 'mri', 'magnetic']):
-#                 result['modality_type'] = ModalityType.BRAIN_IMAGING
-#             else:
-#                 result['modality_type'] = ModalityType.OTHER
-
-#             return result
-
-#         except Exception as e:
-#             logger.error(f"Error in modality matching: {str(e)}")
-#             return None
+def validate_measurements(self):
+    if self.standardized_value_mm is not None:
+        if self.is_target and self.standardized_value_mm < 10:
+            raise ValueError("Target lesions must be ≥10mm in longest diameter")
+        if self.is_target and self.anatomical_site == "lymph_node" and self.standardized_value_mm < 15:
+            raise ValueError("Target lymph nodes must be ≥15mm in short axis")
 
 
 class LocationMapper(EnhancedSimilarityMapper):
@@ -408,9 +395,8 @@ standard_extraction_agent = Agent(
     Extract all information in a single pass and return a complete RadiologyReport object:
     
     1. Study Information:
-       - modality (CT/MRI/PET/etc; mention specific modalities for Mammography, Chest CT (Fungal Infections), Brain Imaging)
        - primary_location (anatomical region of primary tumor using ICDO3 description (not code), not the imaging site)
-       - dates (study and comparison)
+       - date (comparison study date)
        - clinical_history
        - indication
        
